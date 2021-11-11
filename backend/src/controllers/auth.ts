@@ -1,6 +1,8 @@
 import { Response, NextFunction } from "express";
 import env from "../env";
 import { Login } from "../models/api/login.api";
+import User from "../models/database/user.model";
+import { checkArguments } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 import jwtUtils from "../utils/jwt.utils";
 
@@ -24,16 +26,37 @@ export default {
       return res.sendStatus(403);
     }
   },
-  login: (req: ApiRequest<Login>, res: ApiResponse<{ message: string }>) => {
-    const token = jwtUtils.sign(req.body);
-    return res
-      .cookie(TOKEN_COOKIE_NAME, token, {
-        httpOnly: false,
-        secure: true,
-        expires: new Date(Date.now() + env.JWT_EXPIRES),
-      })
-      .status(200)
-      .json({ message: "Logged in" });
+  login: async (
+    req: ApiRequest<Login>,
+    res: ApiResponse<{ message: string }>
+  ) => {
+    if (!checkArguments(req.body.email, req.body.password)) {
+      return res.status(400).json({ message: "Invalid parameter(s)" });
+    }
+    const email: string = req.body.email.trim();
+    const password: string = req.body.password.trim();
+    const users = await User.find({ email: email });
+
+    if (users.length > 0) {
+      const user = users[0];
+      if (password === user.password) {
+        const token: string = jwtUtils.sign({
+          userId: user._id,
+        });
+        return res
+          .cookie(TOKEN_COOKIE_NAME, token, {
+            httpOnly: false,
+            secure: true,
+            expires: new Date(Date.now() + env.JWT_EXPIRES),
+          })
+          .status(200)
+          .json({ message: "Logged in" });
+      } else {
+        return res.status(403).json({ message: "Wrong password" });
+      }
+    } else {
+      return res.status(400).json({ message: "This user doesn't exists" });
+    }
   },
   logout: (req: ApiRequest<{}>, res: ApiResponse<{ message: string }>) => {
     return res

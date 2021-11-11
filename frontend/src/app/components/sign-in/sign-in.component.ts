@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from 'src/app/service/api.service';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface LoginResponse {
   token: string;
@@ -16,28 +22,50 @@ export interface LoginResponse {
   styleUrls: ['./sign-in.component.scss'],
 })
 export class SignInComponent implements OnInit {
+  loginForm!: FormGroup;
+
   constructor(
-    private http: HttpClient,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private formBuilder: FormBuilder,
+    private matSnackbar: MatSnackBar
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initForm();
+  }
+
+  initForm() {
+    this.loginForm = this.formBuilder.group({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required]),
+    });
+  }
 
   login() {
-    console.log('Bonjour');
-    let headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
+    if (!this.loginForm.valid) {
+      return;
+    }
+    const form = this.loginForm.value;
+    console.log(form);
     this.apiService
       .post('/login', {
-        userInfo: {
-          username: 'rems',
-          password: 1234,
-        },
+        email: form.email,
+        password: form.password,
       })
-      .subscribe((res) => {
-        console.log(res);
-        this.router.navigate(['home']);
-      });
+      .subscribe(
+        (res) => {
+          console.log(res);
+          this.matSnackbar.dismiss();
+          this.router.navigate(['home']);
+        },
+        (err) => {
+          this.displayError(err.error.message);
+        }
+      );
+  }
+
+  displayError(message: string) {
+    this.matSnackbar.open(message, 'Dismiss');
   }
 }

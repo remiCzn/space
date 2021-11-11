@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { ApiService } from 'src/app/service/api.service';
 
 const PASSWORD_REGEX: RegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,48}$/;
 
@@ -23,7 +23,7 @@ export class SignUpComponent implements OnInit {
   constructor(
     private matSnackbar: MatSnackBar,
     private formBuilder: FormBuilder,
-    private http: HttpClient
+    private api: ApiService
   ) {}
 
   ngOnInit(): void {
@@ -48,19 +48,16 @@ export class SignUpComponent implements OnInit {
     if (!this.registerForm.valid) {
       return;
     } else {
-      this.http
-        .post<any>(
-          'http://localhost:3000/api/register',
-          {
-            username: form.username,
-            email: form.email,
-            password: form.password,
-          },
-          { observe: 'response' }
-        )
+      this.api
+        .post('/register', {
+          username: form.username,
+          email: form.email,
+          password: form.password,
+        })
         .subscribe(
           (res) => {
-            console.log(res.status);
+            if (res.status === 200) {
+            }
           },
           (err) => {
             this.displayError(err.error.message);

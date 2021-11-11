@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/service/api.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { ApiService } from 'src/app/service/api.service';
   styleUrls: ['./home-page.component.scss'],
 })
 export class HomePageComponent implements OnInit {
-  constructor(private http: HttpClient, private apiService: ApiService) {}
+  constructor(private router: Router, private apiService: ApiService) {}
 
   ngOnInit(): void {}
 
@@ -16,6 +16,13 @@ export class HomePageComponent implements OnInit {
     console.log(document.cookie);
     this.apiService.post('/test', {}).subscribe((res) => {
       console.log(res);
+    });
+  }
+
+  logout() {
+    this.apiService.get('/logout').subscribe((res) => {
+      console.log(res.message);
+      this.router.navigate(['/']);
     });
   }
 }
