@@ -17,7 +17,10 @@ export class ApiService {
 
   get(path: string, params: HttpParams = new HttpParams()): Observable<any> {
     return this.http
-      .get(`${this.ApiURl}${path}`, { params })
+      .get(`${this.ApiURl}${path}`, {
+        observe: 'response',
+        withCredentials: true,
+      })
       .pipe(catchError(this.formatErrors));
   }
 

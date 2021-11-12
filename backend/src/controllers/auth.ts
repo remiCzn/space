@@ -11,16 +11,11 @@ const TOKEN_COOKIE_NAME = "token";
 export default {
   authorization: (req: ApiRequest<any>, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
-    console.log(token);
     if (!token) {
       return res.sendStatus(403);
     }
     try {
-      console.log(1);
       const data = jwtUtils.verify(token);
-      console.log(1);
-      req.username = data;
-      console.log(1);
       return next();
     } catch {
       return res.sendStatus(403);
