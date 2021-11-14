@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import env from "../env";
 import { Login } from "../models/api/login.api";
+import userModel from "../models/database/user.model";
 import User from "../models/database/user.model";
 import { checkArguments } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
@@ -9,13 +10,19 @@ import jwtUtils from "../utils/jwt.utils";
 const TOKEN_COOKIE_NAME = "token";
 
 export default {
-  authorization: (req: ApiRequest<any>, res: Response, next: NextFunction) => {
+  authorization: async (
+    req: ApiRequest<any>,
+    res: Response,
+    next: NextFunction
+  ) => {
     const token = req.cookies.token;
     if (!token) {
       return res.sendStatus(403);
     }
     try {
-      const data = jwtUtils.verify(token);
+      const UserId = jwtUtils.verify(token).userId;
+      const user = await userModel.findById(UserId);
+      req.user = { userId: UserId, username: user.username };
       return next();
     } catch {
       return res.sendStatus(403);

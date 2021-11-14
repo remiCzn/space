@@ -30,4 +30,11 @@ export class ApiService {
       withCredentials: true,
     });
   }
+
+  put(path: string, body: Object = {}): Observable<any> {
+    return this.http.put(`${this.ApiURl}${path}`, body, {
+      observe: 'response',
+      withCredentials: true,
+    });
+  }
 }

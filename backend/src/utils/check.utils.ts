@@ -1,4 +1,4 @@
-export function checkArguments(...args: string[]) {
+export function checkArguments(...args: (string | undefined | null)[]) {
   for (let i = 0; i < args.length; i++) {
     const element = args[i];
     if (
