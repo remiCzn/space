@@ -7,6 +7,7 @@ import {
   checkPassword,
 } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
+import bcrypt from "bcrypt";
 
 export default {
   register: async (
@@ -26,13 +27,15 @@ export default {
     const username: string = req.body.username.trim();
     const users: Array<any> = await User.find({ email: email });
     if (users.length == 0) {
-      const newUser = new User({
-        email: email,
-        password: password,
-        username: username,
+      bcrypt.hash(password, 10).then((hashPw) => {
+        const newUser = new User({
+          email: email,
+          password: hashPw,
+          username: username,
+        });
+        newUser.save();
+        res.status(200).json({ message: "new user registered" });
       });
-      newUser.save();
-      res.status(200).json({ message: "new user registered" });
     } else {
       res.status(400).json({ message: "This user already exists" });
     }

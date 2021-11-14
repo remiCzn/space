@@ -6,6 +6,7 @@ import User from "../models/database/user.model";
 import { checkArguments } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 import jwtUtils from "../utils/jwt.utils";
+import bcrypt from "bcrypt";
 
 const TOKEN_COOKIE_NAME = "token";
 
@@ -41,7 +42,11 @@ export default {
 
     if (users.length > 0) {
       const user = users[0];
-      if (password === user.password) {
+      const validPassword: boolean = await bcrypt.compare(
+        password,
+        user.password
+      );
+      if (validPassword) {
         const token: string = jwtUtils.sign({
           userId: user._id,
         });

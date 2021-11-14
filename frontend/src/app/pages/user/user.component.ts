@@ -60,6 +60,7 @@ export class UserComponent implements OnInit {
       .subscribe(
         (res) => {
           this.snackBar.open(res.body.message, undefined, { duration: 5000 });
+          this.editMode = false;
         },
         (err) => {
           this.snackBar.open(err.error.message, undefined, { duration: 5000 });

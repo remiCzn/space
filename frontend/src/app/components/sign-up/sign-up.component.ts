@@ -23,7 +23,8 @@ export class SignUpComponent implements OnInit {
   constructor(
     private matSnackbar: MatSnackBar,
     private formBuilder: FormBuilder,
-    private api: ApiService
+    private api: ApiService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -55,8 +56,23 @@ export class SignUpComponent implements OnInit {
           password: form.password,
         })
         .subscribe(
-          (res) => {
-            if (res.status === 200) {
+          (regRes) => {
+            if (regRes.status === 200) {
+              this.api
+                .post('/login', {
+                  email: form.email,
+                  password: form.password,
+                })
+                .subscribe(
+                  (logRes) => {
+                    console.log(logRes);
+                    this.matSnackbar.dismiss();
+                    this.router.navigate(['home']);
+                  },
+                  (err) => {
+                    this.displayError(err.error.message);
+                  }
+                );
             }
           },
           (err) => {
