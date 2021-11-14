@@ -7,9 +7,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
+import { MatCardModule } from '@angular/material/card';
+import { MainRoutingModule } from './main-routing.module';
+import { UserComponent } from '../user/user.component';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [HomePageComponent],
+  declarations: [HomePageComponent, NavbarComponent, UserComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -18,6 +24,10 @@ import { MatListModule } from '@angular/material/list';
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
+    MatCardModule,
+    MainRoutingModule,
+    MatInputModule,
+    ReactiveFormsModule,
   ],
 })
 export class HomePageModule {}
