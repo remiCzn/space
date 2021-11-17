@@ -1,5 +1,5 @@
 import { Register } from "../models/api/register.api";
-import { UserApi } from "../models/api/user.api";
+import { UserApi, GetUserApi, PostUserApi } from "../models/api/user.api";
 import User from "../models/database/user.model";
 import {
   checkArguments,
@@ -41,24 +41,26 @@ export default {
     }
   },
 
-  getMe: (
-    req: ApiRequest<any>,
-    res: ApiResponse<{ message: string; username: string }>
-  ) => {
+  getMe: (req: ApiRequest<any>, res: ApiResponse<GetUserApi>) => {
     const user: UserApi | undefined = req.user;
     if (user == undefined) {
       return res.status(500).json({
         message: "Can't retrieve the informatons for the user",
         username: "",
+        firstname: "",
+        lastname: "",
       });
     }
-    return res
-      .status(200)
-      .json({ message: "Success", username: user.username });
+    return res.status(200).json({
+      message: "Success",
+      username: user.username,
+      firstname: user.firstname,
+      lastname: user.lastname,
+    });
   },
 
   updateUser: async (
-    req: ApiRequest<{ username: string }>,
+    req: ApiRequest<PostUserApi>,
     res: ApiResponse<{ message: string }>
   ) => {
     if (req.user == undefined || req.user.userId == undefined) {
@@ -68,7 +70,11 @@ export default {
         return res.status(400).json({ message: "Username shouldn't be empty" });
       }
       const userId: string = req.user.userId;
-      await User.findByIdAndUpdate(userId, { username: req.body.username });
+      await User.findByIdAndUpdate(userId, {
+        username: req.body.username,
+        lastname: req.body.lastname,
+        firstname: req.body.firstname,
+      });
       return res.status(200).json({ message: "User Updated!" });
     }
   },

@@ -23,7 +23,12 @@ export default {
     try {
       const UserId = jwtUtils.verify(token).userId;
       const user = await userModel.findById(UserId);
-      req.user = { userId: UserId, username: user.username };
+      req.user = {
+        userId: UserId,
+        username: user.username,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      };
       return next();
     } catch {
       return res.sendStatus(403);

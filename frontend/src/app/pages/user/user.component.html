@@ -11,8 +11,8 @@
         alt="avatar"
         class="avatar"
       />
-      <h1 class="pt-2">{{ username }}</h1>
-      <h2></h2>
+      <h1 class="pt-2">{{ username.toUpperCase() }}</h1>
+      <h2 style="color: gray">{{ firstname }} {{ lastname }}</h2>
     </div>
     <ng-template #editor>
       <div class="user-card">
@@ -27,7 +27,7 @@
           class="d-flex flex-column align-items-center py-3"
           #editForm="ngForm"
         >
-          <mat-form-field class="example-full-width" appearance="fill">
+          <mat-form-field>
             <mat-label>Username</mat-label>
             <input
               matInput
@@ -35,6 +35,24 @@
               placeholder="Enter your username"
             />
           </mat-form-field>
+          <div class="d-flex">
+            <mat-form-field class="px-2">
+              <mat-label>Firstname</mat-label>
+              <input
+                matInput
+                formControlName="firstname"
+                placeholder="Enter your Firstname"
+              />
+            </mat-form-field>
+            <mat-form-field class="px-2">
+              <mat-label>Lastname</mat-label>
+              <input
+                matInput
+                formControlName="lastname"
+                placeholder="Enter your Lastname"
+              />
+            </mat-form-field>
+          </div>
         </form>
         <button
           mat-raised-button

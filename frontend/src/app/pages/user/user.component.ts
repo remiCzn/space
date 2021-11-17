@@ -18,6 +18,8 @@ export class UserComponent implements OnInit {
   editUserForm!: FormGroup;
 
   username: string = '';
+  firstname: string = '';
+  lastname: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -26,26 +28,37 @@ export class UserComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.api.get('/user').subscribe(
-      (res) => {
+    this.retrieveUserData().then(() => {
+      this.initForm();
+    });
+  }
+
+  retrieveUserData() {
+    return this.api
+      .get('/user')
+      .toPromise()
+      .then((res) => {
         if (res.body.message != 'Success') {
           console.log('Something went wrong');
         }
         this.username = res.body.username;
+        this.firstname = res.body.firstname;
+        this.lastname = res.body.lastname;
 
         this.initForm();
-      },
-      (err) => {
+      })
+      .catch((err) => {
         this.snackBar.open('Unable to retrieve user informations', 'Dismiss', {
           duration: 5000,
         });
-      }
-    );
+      });
   }
 
   initForm() {
     this.editUserForm = this.fb.group({
       Username: new FormControl(this.username, Validators.required),
+      firstname: new FormControl(this.firstname),
+      lastname: new FormControl(this.lastname),
     });
   }
 
@@ -56,9 +69,12 @@ export class UserComponent implements OnInit {
     this.api
       .put('/user', {
         username: this.editUserForm.controls['Username'].value,
+        firstname: this.editUserForm.controls['firstname'].value,
+        lastname: this.editUserForm.controls['lastname'].value,
       })
       .subscribe(
         (res) => {
+          this.retrieveUserData();
           this.snackBar.open(res.body.message, undefined, { duration: 5000 });
           this.editMode = false;
         },
