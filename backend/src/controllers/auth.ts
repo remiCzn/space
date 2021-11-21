@@ -11,7 +11,7 @@ import bcrypt from "bcrypt";
 const TOKEN_COOKIE_NAME = "token";
 
 export default {
-  authorization: async (
+  authMiddleware: async (
     req: ApiRequest<any>,
     res: Response,
     next: NextFunction
@@ -32,6 +32,19 @@ export default {
       return next();
     } catch {
       return res.sendStatus(403);
+    }
+  },
+  authorization: async (req : ApiRequest<any>, res: Response) => {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.send(false);
+    }
+    try {
+      const UserId = jwtUtils.verify(token).userId;
+      const user = await userModel.findById(UserId);
+      return res.send(true);
+    } catch {
+      return res.send(false);
     }
   },
   login: async (

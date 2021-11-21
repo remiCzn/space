@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/service/api.service';
+import { LoadService } from 'src/app/service/load.service';
 
 @Component({
   selector: 'app-user',
@@ -24,7 +25,8 @@ export class UserComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private load: LoadService
   ) {}
 
   ngOnInit(): void {
@@ -63,8 +65,11 @@ export class UserComponent implements OnInit {
   }
 
   save(): void {
+    this.load.load();
     if (!this.editUserForm.valid) {
       this.snackBar.open('Input invalid', 'Dismiss', { duration: 5000 });
+      this.load.loaded();
+      return;
     }
     this.api
       .put('/user', {
@@ -77,9 +82,11 @@ export class UserComponent implements OnInit {
           this.retrieveUserData();
           this.snackBar.open(res.body.message, undefined, { duration: 5000 });
           this.editMode = false;
+          this.load.loaded();
         },
         (err) => {
           this.snackBar.open(err.error.message, undefined, { duration: 5000 });
+          this.load.loaded();
         }
       );
   }

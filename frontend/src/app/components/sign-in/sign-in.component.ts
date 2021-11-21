@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ApiService } from 'src/app/service/api.service';
 import {
   FormBuilder,
   FormControl,
@@ -9,6 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from 'src/app/service/auth.service';
+import { LoadService } from 'src/app/service/load.service';
 
 export interface LoginResponse {
   token: string;
@@ -26,9 +26,10 @@ export class SignInComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private apiService: ApiService,
+    private auth: AuthService,
     private formBuilder: FormBuilder,
-    private matSnackbar: MatSnackBar
+    private matSnackbar: MatSnackBar,
+    private load: LoadService
   ) {}
 
   ngOnInit(): void {
@@ -46,23 +47,18 @@ export class SignInComponent implements OnInit {
     if (!this.loginForm.valid) {
       return;
     }
+    this.load.load();
     const form = this.loginForm.value;
     console.log(form);
-    this.apiService
-      .post('/login', {
-        email: form.email,
-        password: form.password,
-      })
-      .subscribe(
-        (res) => {
-          console.log(res);
-          this.matSnackbar.dismiss();
-          this.router.navigate(['home']);
-        },
-        (err) => {
-          this.displayError(err.error.message);
-        }
-      );
+    this.auth.login(form.email, form.password).then((res) => {
+      if(res == "" || res == null) {
+        this.matSnackbar.dismiss();
+        this.load.loaded();
+        return;
+      }
+      this.displayError(res);
+      this.load.loaded();
+    });
   }
 
   displayError(message: string) {

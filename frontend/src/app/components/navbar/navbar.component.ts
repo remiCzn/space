@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/service/api.service';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,15 +9,14 @@ import { ApiService } from 'src/app/service/api.service';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  constructor(private router: Router, private api: ApiService) {}
+  constructor(private router: Router, private auth: AuthService) {}
 
   goToUserPage() {
     this.router.navigate(['home', 'me']);
   }
 
   logout() {
-    this.api.get('/logout').subscribe();
-    this.router.navigate(['']);
+    this.auth.logout();
   }
 
   ngOnInit(): void {}

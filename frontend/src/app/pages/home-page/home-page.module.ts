@@ -13,9 +13,10 @@ import { MainRoutingModule } from './main-routing.module';
 import { UserComponent } from '../user/user.component';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HomeComponent } from 'src/app/components/home/home.component';
 
 @NgModule({
-  declarations: [HomePageComponent, NavbarComponent, UserComponent],
+  declarations: [HomePageComponent, NavbarComponent, UserComponent, HomeComponent],
   imports: [
     CommonModule,
     HttpClientModule,
