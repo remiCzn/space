@@ -1,31 +1,16 @@
-import { Injectable,EventEmitter } from '@angular/core';
+import { ChangeDetectorRef, Injectable,  } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoadService {
-  private static loadEmitter: EventEmitter<boolean>;
+  public static loading: boolean = false;
 
-  constructor() {
-    if(!LoadService.loadEmitter) {
-      LoadService.loadEmitter = new EventEmitter();
-    }
+  load() : void {
+    LoadService.loading = true;
   }
 
-  load() {
-    LoadService.loadEmitter.emit(true);
+  loaded() : void {
+    LoadService.loading = false;
   }
-
-  loaded() {
-    LoadService.loadEmitter.emit(false);
-  }
-
-  subscribe(callback: (value: boolean) => void) {
-    LoadService.loadEmitter.subscribe(callback);
-  }
-
-
-  
-
-
 }

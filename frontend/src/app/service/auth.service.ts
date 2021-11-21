@@ -15,7 +15,7 @@ export class AuthService {
   }
 
   authentified() : Promise<boolean> {
-    return this.api.get("/authentified").toPromise().then((res) => {
+    return this.api.get("/authentified").then((res) => {
       if(res.status == 200 && res.body == true) {
         return true;
       }
@@ -32,7 +32,7 @@ export class AuthService {
       .post('/login', {
         email: email,
         password: password,
-      }).toPromise()
+      })
       .then(
         (res) => {
           this.router.navigate(['home','main']);
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   logout() {
-    this.api.get('/logout').subscribe();
+    this.api.get('/logout');
     this.router.navigate(['']);
   }
 }

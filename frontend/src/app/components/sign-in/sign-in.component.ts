@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/service/auth.service';
-import { LoadService } from 'src/app/service/load.service';
 
 export interface LoginResponse {
   token: string;
@@ -29,7 +28,6 @@ export class SignInComponent implements OnInit {
     private auth: AuthService,
     private formBuilder: FormBuilder,
     private matSnackbar: MatSnackBar,
-    private load: LoadService
   ) {}
 
   ngOnInit(): void {
@@ -47,17 +45,14 @@ export class SignInComponent implements OnInit {
     if (!this.loginForm.valid) {
       return;
     }
-    this.load.load();
     const form = this.loginForm.value;
     console.log(form);
     this.auth.login(form.email, form.password).then((res) => {
       if(res == "" || res == null) {
         this.matSnackbar.dismiss();
-        this.load.loaded();
         return;
       }
       this.displayError(res);
-      this.load.loaded();
     });
   }
 

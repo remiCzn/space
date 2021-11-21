@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LoadService } from './service/load.service';
 
 @Component({
@@ -6,15 +6,17 @@ import { LoadService } from './service/load.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements AfterViewChecked{
   title = 'frontend';
-  isLoading = false;
 
-  constructor(private load: LoadService) {}
+  constructor(private changeDetector: ChangeDetectorRef) {
+  }
 
-  ngOnInit() {
-    this.load.subscribe((value) => {
-      this.isLoading = value;
-    })
+  ngAfterViewChecked(): void {
+    this.changeDetector.detectChanges();
+  }
+
+  isLoaded() {
+    return LoadService.loading;
   }
 }

@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/service/api.service';
-import { LoadService } from 'src/app/service/load.service';
 
 @Component({
   selector: 'app-user',
@@ -26,19 +25,22 @@ export class UserComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private snackBar: MatSnackBar,
-    private load: LoadService
   ) {}
 
   ngOnInit(): void {
     this.retrieveUserData().then(() => {
       this.initForm();
     });
+    document.addEventListener('keydown', (e) => {
+      if(e.code == 'Enter' && this.editMode) {
+        this.save();
+      }
+    })
   }
 
   retrieveUserData() {
     return this.api
       .get('/user')
-      .toPromise()
       .then((res) => {
         if (res.body.message != 'Success') {
           console.log('Something went wrong');
@@ -65,10 +67,8 @@ export class UserComponent implements OnInit {
   }
 
   save(): void {
-    this.load.load();
     if (!this.editUserForm.valid) {
       this.snackBar.open('Input invalid', 'Dismiss', { duration: 5000 });
-      this.load.loaded();
       return;
     }
     this.api
@@ -77,16 +77,14 @@ export class UserComponent implements OnInit {
         firstname: this.editUserForm.controls['firstname'].value,
         lastname: this.editUserForm.controls['lastname'].value,
       })
-      .subscribe(
+      .then(
         (res) => {
           this.retrieveUserData();
           this.snackBar.open(res.body.message, undefined, { duration: 5000 });
           this.editMode = false;
-          this.load.loaded();
-        },
+        }).catch(
         (err) => {
           this.snackBar.open(err.error.message, undefined, { duration: 5000 });
-          this.load.loaded();
         }
       );
   }

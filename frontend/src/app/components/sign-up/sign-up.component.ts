@@ -25,7 +25,7 @@ export class SignUpComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -55,7 +55,7 @@ export class SignUpComponent implements OnInit {
           email: form.email,
           password: form.password,
         })
-        .subscribe(
+        .then(
           (regRes) => {
             if (regRes.status === 200) {
               this.api
@@ -63,22 +63,22 @@ export class SignUpComponent implements OnInit {
                   email: form.email,
                   password: form.password,
                 })
-                .subscribe(
+                .then(
                   (logRes) => {
                     console.log(logRes);
                     this.matSnackbar.dismiss();
                     this.router.navigate(['home']);
-                  },
-                  (err) => {
-                    this.displayError(err.error.message);
-                  }
-                );
+                  }).catch(
+                    (err) => {
+                      this.displayError(err.error.message);
+                    }
+                  );
             }
-          },
-          (err) => {
-            this.displayError(err.error.message);
-          }
-        );
+          }).catch(
+            (err) => {
+              this.displayError(err.error.message);
+            }
+          );
     }
   }
 
