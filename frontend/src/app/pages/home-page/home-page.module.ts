@@ -14,11 +14,23 @@ import { UserComponent } from '../user/user.component';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from 'src/app/components/home/home.component';
-import { MatGridListModule} from '@angular/material/grid-list'
+import { MatGridListModule } from '@angular/material/grid-list';
 import { UserCardComponent } from 'src/app/components/user-card/user-card.component';
+import { ToDoListComponent } from 'src/app/components/to-do-list/to-do-list.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
+import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
 
 @NgModule({
-  declarations: [HomePageComponent, NavbarComponent, UserComponent, HomeComponent, UserCardComponent],
+  declarations: [
+    HomePageComponent,
+    NavbarComponent,
+    UserComponent,
+    HomeComponent,
+    UserCardComponent,
+    ToDoListComponent,
+    ToDoElementComponent,
+  ],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -32,6 +44,8 @@ import { UserCardComponent } from 'src/app/components/user-card/user-card.compon
     MatInputModule,
     MatGridListModule,
     ReactiveFormsModule,
+    MatRadioModule,
+    MatDividerModule,
   ],
 })
 export class HomePageModule {}
