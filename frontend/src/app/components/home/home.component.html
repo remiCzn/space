@@ -1,1 +1,16 @@
-<h1>Welcome back!</h1>
+<mat-selection-list [multiple]="false">
+  <div class="title-bar">
+    <div mat-subheader>Folders</div>
+    <button mat-icon-button class="add-button" (click)="addExFolder()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <div *ngFor="let fold of folders">
+    <mat-divider></mat-divider>
+    <mat-list-option>
+      <mat-icon mat-list-icon>folder</mat-icon>
+      <div mat-line>{{ fold.name }}</div>
+      <div mat-line>{{ fold.date }}</div>
+    </mat-list-option>
+  </div>
+</mat-selection-list>

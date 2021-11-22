@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
+import { MatListModule, MatSelectionList } from '@angular/material/list';
 import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { MatCardModule } from '@angular/material/card';
 import { MainRoutingModule } from './main-routing.module';
@@ -20,6 +20,7 @@ import { ToDoListComponent } from 'src/app/components/to-do-list/to-do-list.comp
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
+import { MatOptionModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -47,5 +48,6 @@ import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-elemen
     MatRadioModule,
     MatDividerModule,
   ],
+  providers: [MatSelectionList],
 })
 export class HomePageModule {}
