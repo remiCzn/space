@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/service/api.service';
 
 @Component({
   selector: 'app-user-card',
   templateUrl: './user-card.component.html',
-  styleUrls: ['./user-card.component.scss']
+  styleUrls: ['./user-card.component.scss'],
 })
 export class UserCardComponent implements OnInit {
-
   editMode: boolean = false;
   editUserForm!: FormGroup;
 
@@ -20,7 +24,7 @@ export class UserCardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -28,25 +32,34 @@ export class UserCardComponent implements OnInit {
       this.initForm();
     });
     document.addEventListener('keydown', (e) => {
-      if(e.code == 'Enter' && this.editMode) {
+      if (e.code == 'Enter' && this.editMode) {
         this.save();
       }
-    })
+    });
   }
 
   retrieveUserData() {
     return this.api
       .get('/user')
-      .then((res: { body: { message: string; username: string; firstname: string; lastname: string; }; }) => {
-        if (res.body.message != 'Success') {
-          console.log('Something went wrong');
-        }
-        this.username = res.body.username;
-        this.firstname = res.body.firstname;
-        this.lastname = res.body.lastname;
+      .then(
+        (res: {
+          body: {
+            message: string;
+            username: string;
+            firstname: string;
+            lastname: string;
+          };
+        }) => {
+          if (res.body.message != 'Success') {
+            console.log('Something went wrong');
+          }
+          this.username = res.body.username;
+          this.firstname = res.body.firstname;
+          this.lastname = res.body.lastname;
 
-        this.initForm();
-      })
+          this.initForm();
+        }
+      )
       .catch(() => {
         this.snackBar.open('Unable to retrieve user informations', 'Dismiss', {
           duration: 5000,
@@ -73,20 +86,17 @@ export class UserCardComponent implements OnInit {
         firstname: this.editUserForm.controls['firstname'].value,
         lastname: this.editUserForm.controls['lastname'].value,
       })
-      .then(
-        (res: { body: { message: string; }; }) => {
-          this.retrieveUserData();
-          this.snackBar.open(res.body.message, undefined, { duration: 5000 });
-          this.editMode = false;
-        }).catch(
-        (err: { error: { message: string; }; }) => {
-          this.snackBar.open(err.error.message, undefined, { duration: 5000 });
-        }
-      );
+      .then((res: { body: { message: string } }) => {
+        this.retrieveUserData();
+        this.snackBar.open(res.body.message, undefined, { duration: 5000 });
+        this.editMode = false;
+      })
+      .catch((err: { error: { message: string } }) => {
+        this.snackBar.open(err.error.message, undefined, { duration: 5000 });
+      });
   }
 
   changeMode(): void {
     this.editMode = !this.editMode;
   }
-
 }
