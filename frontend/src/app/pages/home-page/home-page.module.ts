@@ -14,9 +14,11 @@ import { UserComponent } from '../user/user.component';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from 'src/app/components/home/home.component';
+import { MatGridListModule} from '@angular/material/grid-list'
+import { UserCardComponent } from 'src/app/components/user-card/user-card.component';
 
 @NgModule({
-  declarations: [HomePageComponent, NavbarComponent, UserComponent, HomeComponent],
+  declarations: [HomePageComponent, NavbarComponent, UserComponent, HomeComponent, UserCardComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -28,6 +30,7 @@ import { HomeComponent } from 'src/app/components/home/home.component';
     MatCardModule,
     MainRoutingModule,
     MatInputModule,
+    MatGridListModule,
     ReactiveFormsModule,
   ],
 })

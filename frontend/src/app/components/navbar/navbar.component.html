@@ -1,13 +1,9 @@
 <mat-toolbar color="primary">
   <span>My App</span>
-  <span class="spacer"></span>
-  <button mat-icon-button>
-    <mat-icon>share</mat-icon>
-  </button>
-  <button mat-icon-button>
+  <button mat-icon-button (click)="goToHome()">
     <mat-icon>home</mat-icon>
   </button>
-  <button mat-raised-button>Connect</button>
+  <span class="spacer"></span>
   <button mat-icon-button (click)="logout()">
     <mat-icon>exit_to_app</mat-icon>
   </button>
