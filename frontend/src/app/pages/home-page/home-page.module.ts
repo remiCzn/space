@@ -12,8 +12,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MainRoutingModule } from './main-routing.module';
 import { UserComponent } from '../user/user.component';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
-import { HomeComponent } from 'src/app/components/home/home.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  DialogCreateFolder,
+  HomeComponent,
+} from 'src/app/components/home/home.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { UserCardComponent } from 'src/app/components/user-card/user-card.component';
 import { ToDoListComponent } from 'src/app/components/to-do-list/to-do-list.component';
@@ -21,6 +24,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -31,6 +35,7 @@ import { MatOptionModule } from '@angular/material/core';
     UserCardComponent,
     ToDoListComponent,
     ToDoElementComponent,
+    DialogCreateFolder,
   ],
   imports: [
     CommonModule,
@@ -44,9 +49,11 @@ import { MatOptionModule } from '@angular/material/core';
     MainRoutingModule,
     MatInputModule,
     MatGridListModule,
+    FormsModule,
     ReactiveFormsModule,
     MatRadioModule,
     MatDividerModule,
+    MatDialogModule,
   ],
   providers: [MatSelectionList],
 })

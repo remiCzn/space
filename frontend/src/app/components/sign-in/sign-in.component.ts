@@ -27,7 +27,7 @@ export class SignInComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private formBuilder: FormBuilder,
-    private matSnackbar: MatSnackBar,
+    private matSnackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -46,9 +46,8 @@ export class SignInComponent implements OnInit {
       return;
     }
     const form = this.loginForm.value;
-    console.log(form);
     this.auth.login(form.email, form.password).then((res) => {
-      if(res == "" || res == null) {
+      if (res == '' || res == null) {
         this.matSnackbar.dismiss();
         return;
       }

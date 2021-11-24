@@ -51,7 +51,6 @@ export class UserCardComponent implements OnInit {
           };
         }) => {
           if (res.body.message != 'Success') {
-            console.log('Something went wrong');
           }
           this.username = res.body.username;
           this.firstname = res.body.firstname;

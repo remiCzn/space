@@ -1,16 +1,23 @@
 <mat-selection-list [multiple]="false">
   <div class="title-bar">
-    <div mat-subheader>Folders</div>
-    <button mat-icon-button class="add-button" (click)="addExFolder()">
+    <button
+      mat-icon-button
+      class="icon-button"
+      (click)="accessNewFolder(currentFolder.parentId)"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <button mat-icon-button class="icon-button" (click)="addFolderDialog()">
       <mat-icon>add</mat-icon>
     </button>
+    <div mat-subheader>Folders: {{ currentFolder.name }}</div>
   </div>
-  <div *ngFor="let fold of folders">
+  <div *ngFor="let fold of sortBy(0)">
     <mat-divider></mat-divider>
-    <mat-list-option>
+    <mat-list-option (click)="accessNewFolder(fold.id)">
       <mat-icon mat-list-icon>folder</mat-icon>
       <div mat-line>{{ fold.name }}</div>
-      <div mat-line>{{ fold.date }}</div>
+      <div mat-line>{{ displayDate(fold.date) }}</div>
     </mat-list-option>
   </div>
 </mat-selection-list>

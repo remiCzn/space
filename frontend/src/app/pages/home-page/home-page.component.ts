@@ -16,23 +16,4 @@ export class HomePageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
-
-  // get() {
-  //   console.log(document.cookie);
-  //   this.apiService.get('/test').subscribe(
-  //     (res) => {
-  //       this.snackBar.open(res.body, 'Dismiss');
-  //     },
-  //     (err) => {
-  //       this.snackBar.open(err, 'Dismiss');
-  //     }
-  //   );
-  // }
-
-  // logout() {
-  //   this.apiService.get('/logout').subscribe((res) => {
-  //     console.log(res.message);
-  //     this.router.navigate(['/']);
-  //   });
-  // }
 }

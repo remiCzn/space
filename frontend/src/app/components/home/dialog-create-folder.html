@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Create new folder</h1>
+<form [formGroup]="folderForm" (ngSubmit)="onClick()">
+  <div mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">No Thanks</button>
+    <button mat-raised-button type="submit">Ok</button>
+  </div>
+</form>
