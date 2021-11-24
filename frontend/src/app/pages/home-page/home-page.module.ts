@@ -23,7 +23,6 @@ import { ToDoListComponent } from 'src/app/components/to-do-list/to-do-list.comp
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
-import { MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({

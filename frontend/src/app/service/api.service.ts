@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { LoadService } from './load.service';
 
@@ -23,7 +23,9 @@ export class ApiService {
         observe: 'response',
         withCredentials: true,
       })
-      .pipe(catchError(this.formatErrors)).toPromise().then((res) => {
+      .pipe(catchError(this.formatErrors))
+      .toPromise()
+      .then((res) => {
         this.load.loaded();
         return res;
       });
@@ -31,23 +33,29 @@ export class ApiService {
 
   post(path: string, body: Object = {}): Promise<any> {
     this.load.load();
-    return this.http.post(`${this.ApiURl}${path}`, body, {
-      observe: 'response',
-      withCredentials: true,
-    }).toPromise().then((res) => {
-      this.load.loaded();
-      return res;
-    });
+    return this.http
+      .post(`${this.ApiURl}${path}`, body, {
+        observe: 'response',
+        withCredentials: true,
+      })
+      .toPromise()
+      .then((res) => {
+        this.load.loaded();
+        return res;
+      });
   }
 
   put(path: string, body: Object = {}): Promise<any> {
     this.load.load();
-    return this.http.put(`${this.ApiURl}${path}`, body, {
-      observe: 'response',
-      withCredentials: true,
-    }).toPromise().then((res) => {
-      this.load.loaded();
-      return res;
-    });
+    return this.http
+      .put(`${this.ApiURl}${path}`, body, {
+        observe: 'response',
+        withCredentials: true,
+      })
+      .toPromise()
+      .then((res) => {
+        this.load.loaded();
+        return res;
+      });
   }
 }

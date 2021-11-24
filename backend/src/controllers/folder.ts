@@ -30,7 +30,6 @@ export default {
           });
         }
         //Retrieve home folder and send to the front
-        console.log(resHome);
         const folder: FolderApi = {
           name: resHome.title,
           childrens: resHome.childrens,
@@ -70,7 +69,6 @@ export default {
       user: req.user?.userId,
     });
     await folder.save().then((newFolder: any) => {
-      console.log(newFolder);
       Folder.updateOne(
         { _id: parentId },
         {
@@ -78,7 +76,6 @@ export default {
         }
       )
         .then((pushCheck) => {
-          console.log(pushCheck);
           return res.status(200).json({
             id: newFolder._id,
             name: name,

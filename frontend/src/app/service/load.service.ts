@@ -1,16 +1,16 @@
-import { ChangeDetectorRef, Injectable,  } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoadService {
   public static loading: boolean = false;
 
-  load() : void {
+  load(): void {
     LoadService.loading = true;
   }
 
-  loaded() : void {
+  loaded(): void {
     LoadService.loading = false;
   }
 }

@@ -1,6 +1,5 @@
 import { Router } from "express";
 import auth from "./controllers/auth";
-import test from "./controllers/test";
 import user from "./controllers/user";
 import folder from "./controllers/folder";
 
@@ -16,8 +15,5 @@ export default (() => {
   apiRouter.route("/folder").post(auth.authMiddleware, folder.createFolder);
   apiRouter.route("/folder/home").get(auth.authMiddleware, folder.getHome);
   apiRouter.route("/folder/:id").get(auth.authMiddleware, folder.displayFolder);
-
-  apiRouter.route("/test").get(auth.authMiddleware, test.test);
-
   return apiRouter;
 })();
