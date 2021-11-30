@@ -24,6 +24,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatRadioModule,
     MatDividerModule,
     MatDialogModule,
+    MatMenuModule,
   ],
   providers: [MatSelectionList],
 })

@@ -2,6 +2,7 @@
   <div class="title-bar">
     <button
       mat-icon-button
+      [disabled]="currentFolder.parentId == null"
       class="icon-button"
       (click)="accessNewFolder(currentFolder.parentId)"
     >
@@ -14,10 +15,35 @@
   </div>
   <div *ngFor="let fold of sortBy(0)">
     <mat-divider></mat-divider>
-    <mat-list-option (click)="accessNewFolder(fold.id)">
-      <mat-icon mat-list-icon>folder</mat-icon>
-      <div mat-line>{{ fold.name }}</div>
-      <div mat-line>{{ displayDate(fold.date) }}</div>
-    </mat-list-option>
+    <div class="d-flex align-items-center">
+      <mat-list-option
+        (click)="accessNewFolder(fold.id)"
+        class="d-flex flex-row"
+      >
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <div class="d-flex">
+          <div class="d-flex flex-column me-auto">
+            <div mat-line>{{ fold.name }}</div>
+            <div mat-line>
+              {{ displayDate(fold.date) }}
+            </div>
+            <span style="width: 100%"></span>
+          </div>
+        </div>
+      </mat-list-option>
+      <button
+        mat-icon-button
+        class="justify-self-end mr-6"
+        [matMenuTriggerFor]="menu"
+      >
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #menu>
+        <button mat-menu-item (click)="delete(fold)">
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </div>
   </div>
 </mat-selection-list>

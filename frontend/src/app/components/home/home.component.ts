@@ -19,8 +19,6 @@ import { Folder } from 'src/model/folder.model';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  date: Date = new Date('1/1/21');
-
   currentFolder: Folder = {
     name: '',
     date: new Date(),
@@ -72,7 +70,7 @@ export class HomeComponent implements OnInit {
   sortBy(prop: SortBy) {
     if (prop == SortBy.DATE) {
       return this.folders.sort((a, b) => {
-        return a.date.getTime() - b.date.getTime();
+        return b.date.getTime() - a.date.getTime();
       });
     } else {
       return this.folders;
@@ -101,6 +99,10 @@ export class HomeComponent implements OnInit {
         });
       });
     });
+  }
+
+  delete(folder: Folder) {
+    console.log(folder);
   }
 }
 
