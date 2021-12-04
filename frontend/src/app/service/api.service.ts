@@ -58,4 +58,19 @@ export class ApiService {
         return res;
       });
   }
+
+  delete(path: string): Promise<any> {
+    this.load.load();
+    return this.http
+      .delete(`${this.ApiURl}${path}`, {
+        observe: 'response',
+        withCredentials: true,
+      })
+      .pipe(catchError(this.formatErrors))
+      .toPromise()
+      .then((res) => {
+        this.load.loaded();
+        return res;
+      });
+  }
 }

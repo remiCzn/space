@@ -14,6 +14,9 @@ export default (() => {
 
   apiRouter.route("/folder").post(auth.authMiddleware, folder.createFolder);
   apiRouter.route("/folder/home").get(auth.authMiddleware, folder.getHome);
-  apiRouter.route("/folder/:id").get(auth.authMiddleware, folder.displayFolder);
+  apiRouter
+    .route("/folder/:id")
+    .get(auth.authMiddleware, folder.displayFolder)
+    .delete(auth.authMiddleware, folder.deleteFolder);
   return apiRouter;
 })();

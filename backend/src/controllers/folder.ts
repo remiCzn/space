@@ -1,5 +1,6 @@
 import { FolderApi } from "../models/api/folder.api";
 import Folder from "../models/database/folder.model";
+import folderService from "../services/folderService";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 
 export default {
@@ -88,5 +89,10 @@ export default {
           console.log(err);
         });
     });
+  },
+  deleteFolder: async (req: ApiRequest<any>, res: ApiResponse<any>) => {
+    const folderId = req.params.id;
+    const result = await folderService.deleteFolder(folderId);
+    res.status(200).send(result);
   },
 };

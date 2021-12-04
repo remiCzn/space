@@ -102,7 +102,9 @@ export class HomeComponent implements OnInit {
   }
 
   delete(folder: Folder) {
-    console.log(folder);
+    this.api.delete('/folder/' + folder.id).then((res) => {
+      console.log(res.body);
+    });
   }
 }
 
