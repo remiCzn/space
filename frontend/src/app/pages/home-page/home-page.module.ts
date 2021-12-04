@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-element/to-do-element.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { NavSideComponent } from 'src/app/components/home/nav-side/nav-side.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { MatMenuModule } from '@angular/material/menu';
     ToDoListComponent,
     ToDoElementComponent,
     DialogCreateFolder,
+    NavSideComponent,
   ],
   imports: [
     CommonModule,
