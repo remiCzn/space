@@ -13,10 +13,7 @@ import { MainRoutingModule } from './main-routing.module';
 import { UserComponent } from '../user/user.component';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  DialogCreateFolder,
-  HomeComponent,
-} from 'src/app/components/home/home.component';
+import { HomeComponent } from 'src/app/components/home/home.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { UserCardComponent } from 'src/app/components/user-card/user-card.component';
 import { ToDoListComponent } from 'src/app/components/to-do-list/to-do-list.component';
@@ -26,6 +23,7 @@ import { ToDoElementComponent } from 'src/app/components/to-do-list/to-do-elemen
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { NavSideComponent } from 'src/app/components/home/nav-side/nav-side.component';
+import { DialogCreateFolder } from 'src/app/components/home/nav-side/dialog-create-folder';
 
 @NgModule({
   declarations: [

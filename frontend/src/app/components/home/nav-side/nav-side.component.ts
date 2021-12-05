@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/service/api.service';
 import { Folder } from 'src/model/folder.model';
-import { DialogCreateFolder, SortBy } from '../home.component';
+import { SortBy } from '../home.component';
+import { DialogCreateFolder } from './dialog-create-folder';
 
 @Component({
   selector: 'app-nav-side',
@@ -94,7 +95,8 @@ export class NavSideComponent implements OnInit {
 
   delete(folder: Folder) {
     this.api.delete('/folder/' + folder.id).then((res) => {
-      console.log(res.body);
+      //refresh
+      this.accessNewFolder(this.currentFolder.id);
     });
   }
 }
