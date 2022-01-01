@@ -7,8 +7,13 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ToDoElementComponent implements OnInit {
   @Input() value: string = '';
+  @Input() deleteThis: () => void = () => {};
 
   constructor() {}
 
   ngOnInit(): void {}
+
+  onClick() : void {
+    this.deleteThis();
+  }
 }

@@ -1,8 +1,14 @@
-<mat-card>
-  <h1>Hello</h1>
+<mat-card style="padding-left: 0; padding-right: 0;">
+  <h1 style="padding-left: 16px;">To-Do list!</h1>
   <div class="todoList">
     <mat-divider></mat-divider>
-    <app-to-do-element value="Faire les courses"></app-to-do-element>
-    <app-to-do-element value="Faire à manger"></app-to-do-element>
+    <app-to-do-element *ngFor="let task of tasks; let index = index" style="padding-left: 16px;" [value]="task" [deleteThis] = "callback(index)"></app-to-do-element>
   </div>
+  <mat-form-field class="input" appearance="fill">
+    <mat-label>New task</mat-label>
+    <input matInput type="text" [(ngModel)]="input">
+    <button *ngIf="input" matSuffix mat-icon-button aria-label="" (click)="addTask()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </mat-form-field>  
 </mat-card>
