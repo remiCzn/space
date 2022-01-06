@@ -1,5 +1,5 @@
 import { FolderApi } from "../models/api/folder.api";
-import Folder from "../models/database/folder.model";
+import Folder from "../models/database/folder";
 import folderService from "../services/folderService";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 

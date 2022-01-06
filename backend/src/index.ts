@@ -1,18 +1,34 @@
 import express from "express";
 import config from "./env";
-import api from "./apiRouter";
+// import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import mongoose from "mongoose";
+import mariadb from "mariadb";
+import folder from "./models/database/folder";
 
-mongoose
-  .connect(config.DB_URL)
-  .then(() => {
-    console.log("MongoDB connected!");
+const pool = mariadb.createPool({
+  host: "127.0.0.1",
+  user: 'root',
+  password: 'root',
+  port: 3306,
+  connectionLimit: 5
+});
+
+pool.getConnection().then((conn) => {
+  console.log("Connected");
+  conn.query("SELECT * FROM SPACE.USER").then((rows) => {
+    console.log(rows[0]);
+  }).catch((err) => {
+    console.log(err);
   })
-  .catch(() => {
-    console.error("MongoDB failed to connect");
-  });
+}).catch((err) => {
+  console.log(err);
+  console.log("Not connected");
+})
+
+folder.getFolderByUser(1).then((res) => {
+  console.log(res);
+})
 
 const server = express();
 
@@ -38,7 +54,7 @@ server.get("/", (req, res) => {
   res.send(`Connected on server`);
 });
 
-server.use("/api", api);
+// server.use("/api", api);
 
 server.listen(PORT, () => {
   console.log(`Server is running in http://localhost:${PORT}`);

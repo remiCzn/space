@@ -1,4 +1,4 @@
-import folderModel from "../models/database/folder.model";
+import folderModel from "../models/database/folder";
 
 async function deleteFolder(id: string) {
   const parent = await folderModel.find({ childrens: { $in: [id] } });
