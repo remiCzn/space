@@ -10,7 +10,7 @@ export interface FOLDER {
 export default {
     getFolderById: async (id: number) => {
         const db = await pool.getConnection();
-        const folder = await db.query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id]).then((result: Array<FOLDER>) => {
+        return await db.query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id]).then((result: Array<FOLDER>) => {
             return result[0];
         })
     },
@@ -39,5 +39,9 @@ export default {
     delete: async (id: number) => {
         const db = await pool.getConnection();
         await db.query("DELETE FROM SPACE.FOLDER WHERE ID = ?", [id]);
+    },
+    createFolder: async (user: number, title: string, parent: number) => {
+        const db = await pool.getConnection();
+        return await db.query("INSERT INTO SPACE.FOLDER(user, title, parent) VALUES (?,?,?)", [user, title, parent]);
     }
 }

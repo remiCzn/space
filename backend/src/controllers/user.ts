@@ -1,6 +1,6 @@
 import { Register } from "../models/api/register.api";
 import { UserApi, GetUserApi, PostUserApi } from "../models/api/user.api";
-import User from "../models/database/user.model";
+import User from "../models/database/user";
 import {
   checkArguments,
   checkEmail,
@@ -69,7 +69,7 @@ export default {
       if (req.body.username == undefined || req.body.username == null) {
         return res.status(400).json({ message: "Username shouldn't be empty" });
       }
-      const userId: string = req.user.userId;
+      const userId: number = req.user.userId;
       await User.findByIdAndUpdate(userId, {
         username: req.body.username,
         lastname: req.body.lastname,

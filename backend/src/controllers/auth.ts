@@ -1,8 +1,8 @@
 import { Response, NextFunction } from "express";
 import env from "../env";
 import { Login } from "../models/api/login.api";
-import userModel from "../models/database/user.model";
-import User from "../models/database/user.model";
+import userModel from "../models/database/user";
+import User from "../models/database/user";
 import { checkArguments } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 import jwtUtils from "../utils/jwt.utils";
@@ -21,8 +21,8 @@ export default {
       return res.sendStatus(403);
     }
     try {
-      const UserId = jwtUtils.verify(token).userId;
-      const user = await userModel.findById(UserId);
+      const UserId: number = jwtUtils.verify(token).userId;
+      const user = await userModel.getUserById(UserId);
       req.user = {
         userId: UserId,
         username: user.username,
@@ -34,14 +34,14 @@ export default {
       return res.sendStatus(403);
     }
   },
-  authorization: async (req : ApiRequest<any>, res: Response) => {
+  authorization: async (req: ApiRequest<any>, res: Response) => {
     const token = req.cookies.token;
     if (!token) {
       return res.send(false);
     }
     try {
       const UserId = jwtUtils.verify(token).userId;
-      const user = await userModel.findById(UserId);
+      const user = await userModel.getUserById(UserId);
       return res.send(true);
     } catch {
       return res.send(false);
