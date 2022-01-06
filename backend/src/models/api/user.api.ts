@@ -1,5 +1,5 @@
 export interface UserApi {
-  userId: string;
+  userId: number;
   username: string;
   firstname: string;
   lastname: string;

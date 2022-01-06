@@ -3,32 +3,8 @@ import config from "./env";
 // import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import mariadb from "mariadb";
 import folder from "./models/database/folder";
 
-const pool = mariadb.createPool({
-  host: "127.0.0.1",
-  user: 'root',
-  password: 'root',
-  port: 3306,
-  connectionLimit: 5
-});
-
-pool.getConnection().then((conn) => {
-  console.log("Connected");
-  conn.query("SELECT * FROM SPACE.USER").then((rows) => {
-    console.log(rows[0]);
-  }).catch((err) => {
-    console.log(err);
-  })
-}).catch((err) => {
-  console.log(err);
-  console.log("Not connected");
-})
-
-folder.getFolderByUser(1).then((res) => {
-  console.log(res);
-})
 
 const server = express();
 

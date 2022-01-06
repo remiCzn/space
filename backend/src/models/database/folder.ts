@@ -1,9 +1,16 @@
 import pool from "./db";
 
+export interface FOLDER {
+    id: number,
+    title: string,
+    user: number,
+    parent: number | null
+}
+
 export default {
     getFolderById: async (id: number) => {
         const db = await pool.getConnection();
-        const folder = await db.query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id]).then((result) => {
+        const folder = await db.query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id]).then((result: Array<FOLDER>) => {
             return result[0];
         })
     },
@@ -15,6 +22,22 @@ export default {
         return folderList;
     },
     getHomeFolder: async (userid: number) => {
-
+        const db = await pool.getConnection();
+        const home = await db.query("SELECT * FROM SPACE.FOLDER WHERE parent IS NULL AND user = ?", [userid]).then((res) => {
+            if (res.length >= 1) {
+                return res[0];
+            } else {
+                return db.query("INSERT INTO SPACE.FOLDER(title, user) VALUES (?,?)", ["Home", userid]).then(() => {
+                    return db.query("SELECT * FROM SPACE.FOLDER WHERE PARENT = NULL").then(async (folder) => {
+                        return folder[0];
+                    });
+                });
+            }
+        });
+        return home;
+    },
+    delete: async (id: number) => {
+        const db = await pool.getConnection();
+        await db.query("DELETE FROM SPACE.FOLDER WHERE ID = ?", [id]);
     }
 }

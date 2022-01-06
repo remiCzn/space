@@ -1,15 +1,14 @@
 import { FolderApi } from "../models/api/folder.api";
 import Folder from "../models/database/folder";
-import folderService from "../services/folderService";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 
 export default {
   getHome: async (req: ApiRequest<any>, res: ApiResponse<any>) => {
-    const userId: string | undefined = req.user?.userId;
+    const userId: number | undefined = req.user?.userId;
     if (userId == undefined) {
       return res.sendStatus(403);
     }
-    await Folder.findOne({ user: userId, isHome: true })
+    await Folder.getHomeFolder(userId)
       .then((resHome) => {
         if (resHome == null) {
           //Create home folder
