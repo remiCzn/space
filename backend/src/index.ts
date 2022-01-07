@@ -3,8 +3,6 @@ import config from "./env";
 // import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import folder from "./models/database/folder";
-
 
 const server = express();
 

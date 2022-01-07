@@ -1,6 +1,6 @@
-import { Register } from "../models/api/register.api";
-import { UserApi, GetUserApi, PostUserApi } from "../models/api/user.api";
-import User from "../models/database/user";
+import { Register } from "../models/register.api";
+import { UserApi, GetUserApi, PostUserApi } from "../models/user.api";
+import User from "../database/controllers/user";
 import {
   checkArguments,
   checkEmail,
@@ -25,16 +25,16 @@ export default {
     const email: string = req.body.email.trim();
     const password: string = req.body.password.trim();
     const username: string = req.body.username.trim();
-    const users: Array<any> = await User.find({ email: email });
+    const users: Array<any> = await User.getUserByEmail(email);
     if (users.length == 0) {
       bcrypt.hash(password, 10).then((hashPw) => {
-        const newUser = new User({
-          email: email,
-          password: hashPw,
-          username: username,
-        });
-        newUser.save();
-        res.status(200).json({ message: "new user registered" });
+        User.createUser(email, password, username)
+          .then(() => {
+            res.status(200).json({ message: "new user registered" });
+          })
+          .catch(() => {
+            res.sendStatus(500);
+          });
       });
     } else {
       res.status(400).json({ message: "This user already exists" });
@@ -70,11 +70,7 @@ export default {
         return res.status(400).json({ message: "Username shouldn't be empty" });
       }
       const userId: number = req.user.userId;
-      await User.findByIdAndUpdate(userId, {
-        username: req.body.username,
-        lastname: req.body.lastname,
-        firstname: req.body.firstname,
-      });
+      User.changeUsername(userId, req.body.username);
       return res.status(200).json({ message: "User Updated!" });
     }
   },

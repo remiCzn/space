@@ -1,8 +1,8 @@
 import { Response, NextFunction } from "express";
 import env from "../env";
-import { Login } from "../models/api/login.api";
-import userModel from "../models/database/user";
-import User from "../models/database/user";
+import { Login } from "../models/login.api";
+import userModel from "../database/controllers/user";
+import User from "../database/controllers/user";
 import { checkArguments } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 import jwtUtils from "../utils/jwt.utils";
@@ -26,8 +26,6 @@ export default {
       req.user = {
         userId: UserId,
         username: user.username,
-        firstname: user.firstname,
-        lastname: user.lastname,
       };
       return next();
     } catch {
@@ -56,7 +54,7 @@ export default {
     }
     const email: string = req.body.email.trim();
     const password: string = req.body.password.trim();
-    const users = await User.find({ email: email });
+    const users = await User.getUserByEmail(email);
 
     if (users.length > 0) {
       const user = users[0];
@@ -66,7 +64,7 @@ export default {
       );
       if (validPassword) {
         const token: string = jwtUtils.sign({
-          userId: user._id,
+          userId: user.id,
         });
         return res
           .cookie(TOKEN_COOKIE_NAME, token, {
