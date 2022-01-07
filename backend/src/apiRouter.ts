@@ -2,6 +2,7 @@ import { Router } from "express";
 import auth from "./controllers/auth";
 import user from "./controllers/user";
 import folder from "./controllers/folder";
+import task from "./controllers/task";
 
 export default (() => {
   const apiRouter: Router = Router();
@@ -18,5 +19,8 @@ export default (() => {
     .route("/folder/:id")
     .get(auth.authMiddleware, folder.displayFolder)
     .delete(auth.authMiddleware, folder.deleteFolder);
+
+  apiRouter.route("/tasks").get(auth.authMiddleware, task.getTasks);
+  apiRouter.route("/task").post(auth.authMiddleware, task.createTask);
   return apiRouter;
 })();

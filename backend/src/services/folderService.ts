@@ -20,5 +20,5 @@ async function deleteFolder(id: string) {
 }
 
 export default {
-  deleteFolder: deleteFolder,
+  deleteFolder,
 };
