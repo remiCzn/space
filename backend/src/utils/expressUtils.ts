@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as core from "express-serve-static-core";
-import { UserApi } from "../models/api/user.api";
+import { UserApi } from "../models/user.api";
 
 export interface ApiRequest<T>
   extends Request<core.ParamsDictionary, any, T, core.Query> {

@@ -42,6 +42,11 @@ export class ApiService {
       .then((res) => {
         this.load.loaded();
         return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        this.load.loaded();
+        return err;
       });
   }
 
@@ -69,8 +74,10 @@ export class ApiService {
       .pipe(catchError(this.formatErrors))
       .toPromise()
       .then((res) => {
-        this.load.loaded();
         return res;
+      })
+      .finally(() => {
+        this.load.loaded();
       });
   }
 }

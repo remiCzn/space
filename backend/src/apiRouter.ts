@@ -1,22 +1,32 @@
 import { Router } from "express";
-import auth from "./controllers/auth";
-import user from "./controllers/user";
-import folder from "./controllers/folder";
+import { AuthBusinessController } from "./controllers/auth";
+import { FolderBusinessController } from "./controllers/folder";
+import { UserBusinessController } from "./controllers/user";
+
+const authBusiness = new AuthBusinessController();
+const folderBusiness = new FolderBusinessController();
+const userBusiness = new UserBusinessController();
 
 export default (() => {
   const apiRouter: Router = Router();
-  apiRouter.route("/register").post(user.register);
-  apiRouter.route("/user").get(auth.authMiddleware, user.getMe);
-  apiRouter.route("/user").put(auth.authMiddleware, user.updateUser);
-  apiRouter.route("/login").post(auth.login);
-  apiRouter.route("/logout").get(auth.logout);
-  apiRouter.route("/authentified").get(auth.authorization);
+  apiRouter.route("/register").post(userBusiness.register);
+  apiRouter.route("/user").get(authBusiness.AuthMiddleware, userBusiness.getMe);
+  apiRouter
+    .route("/user")
+    .put(authBusiness.AuthMiddleware, userBusiness.updateUser);
+  apiRouter.route("/login").post(authBusiness.login);
+  apiRouter.route("/logout").get(authBusiness.logout);
+  apiRouter.route("/authentified").get(authBusiness.authorization);
 
-  apiRouter.route("/folder").post(auth.authMiddleware, folder.createFolder);
-  apiRouter.route("/folder/home").get(auth.authMiddleware, folder.getHome);
+  apiRouter
+    .route("/folder")
+    .post(authBusiness.AuthMiddleware, folderBusiness.createFolder);
+  apiRouter
+    .route("/folder/home")
+    .get(authBusiness.AuthMiddleware, folderBusiness.getHome);
   apiRouter
     .route("/folder/:id")
-    .get(auth.authMiddleware, folder.displayFolder)
-    .delete(auth.authMiddleware, folder.deleteFolder);
+    .get(authBusiness.AuthMiddleware, folderBusiness.displayFolder)
+    .delete(authBusiness.AuthMiddleware, folderBusiness.deleteFolder);
   return apiRouter;
 })();

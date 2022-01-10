@@ -1,8 +1,12 @@
 import express from "express";
 import config from "./env";
-// import api from "./apiRouter";
+import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import dbRepository from "./database/controllers/db";
+import { FolderRepository } from "./database/controllers/folder";
+
+new dbRepository().testConnection();
 
 const server = express();
 
@@ -28,7 +32,7 @@ server.get("/", (req, res) => {
   res.send(`Connected on server`);
 });
 
-// server.use("/api", api);
+server.use("/api", api);
 
 server.listen(PORT, () => {
   console.log(`Server is running in http://localhost:${PORT}`);

@@ -1,6 +1,11 @@
 export interface Folder {
-  id: string;
+  id: number;
   name: string;
   date: Date;
-  parentId: string | null;
+  parentId: number | null;
+}
+
+export interface ChildFolder {
+  id: number;
+  name: string;
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/service/api.service';
-import { Folder } from 'src/model/folder.model';
+import { ChildFolder, Folder } from 'src/model/folder.model';
 import { SortBy } from '../home.component';
 import { DialogCreateFolder } from './dialog-create-folder';
 
@@ -14,16 +14,16 @@ export class NavSideComponent implements OnInit {
   currentFolder: Folder = {
     name: '',
     date: new Date(),
-    id: '',
+    id: 0,
     parentId: null,
   };
 
-  folders: Array<Folder> = [];
+  folders: Array<ChildFolder> = [];
 
   constructor(public dialog: MatDialog, private api: ApiService) {}
 
   ngOnInit(): void {
-    this.accessNewFolder('home');
+    this.accessNewFolder(null);
   }
 
   addFolder(name: string): void {
@@ -33,12 +33,7 @@ export class NavSideComponent implements OnInit {
         parentId: this.currentFolder.id,
       })
       .then((res) => {
-        this.folders.push({
-          name: res.body.name,
-          id: res.body.id,
-          date: new Date(res.body.updatedAt),
-          parentId: res.body.parentId,
-        });
+        this.accessNewFolder(res.body.id);
       });
   }
 
@@ -62,41 +57,40 @@ export class NavSideComponent implements OnInit {
   sortBy(prop: SortBy) {
     if (prop == SortBy.DATE) {
       return this.folders.sort((a, b) => {
-        return b.date.getTime() - a.date.getTime();
+        return a.id - b.id;
       });
     } else {
       return this.folders;
     }
   }
 
-  accessNewFolder(id: string | null) {
+  accessNewFolder(id: number | null) {
     if (id == null) {
-      console.error('Unable to go to null folder');
-      return;
-    }
-    this.currentFolder.id = id;
-    this.api.get(`/folder/${id}`).then((res) => {
-      this.currentFolder.id = res.body.id;
-      this.currentFolder.name = res.body.name;
-      this.currentFolder.parentId = res.body.parentId;
-      this.folders = [];
-      res.body.childrens.forEach((childId: string) => {
-        this.api.get(`/folder/${childId}`).then((res) => {
-          this.folders.push({
-            id: res.body.id,
-            name: res.body.name,
-            date: new Date(res.body.updatedAt),
-            parentId: res.body.parentId,
-          });
-        });
+      this.api.get(`/folder/home`).then((res) => {
+        this.currentFolder.id = res.body.id;
+        this.currentFolder.name = res.body.name;
+        this.currentFolder.parentId = res.body.parentId;
+        this.folders = res.body.childrens;
       });
-    });
+    } else {
+      this.currentFolder.id = id;
+      this.api.get(`/folder/${id}`).then((res) => {
+        this.currentFolder.id = res.body.id;
+        this.currentFolder.name = res.body.name;
+        this.currentFolder.parentId = res.body.parentId;
+        this.folders = res.body.childrens;
+      });
+    }
   }
 
-  delete(folder: Folder) {
-    this.api.delete('/folder/' + folder.id).then((res) => {
-      //refresh
-      this.accessNewFolder(this.currentFolder.id);
-    });
+  delete(folder: ChildFolder) {
+    this.api
+      .delete('/folder/' + folder.id)
+      .then((res) => {
+        this.accessNewFolder(res.body.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }

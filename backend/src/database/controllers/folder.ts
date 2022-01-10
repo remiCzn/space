@@ -1,59 +1,79 @@
 import { FOLDER } from "../models/folder.db";
+import { USER } from "../models/user.db";
+import dbRepository from "./db";
 import pool from "./db";
 
-export default {
-  getFolderById: async (id: number) => {
-    const db = await pool.getConnection();
-    return await db
-      .query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id])
-      .then((result: Array<FOLDER>) => {
+export class FolderRepository extends dbRepository {
+  public async getFolderById(id: number) {
+    return this.query("SELECT * FROM SPACE.FOLDER WHERE ID = ?", [id]).then(
+      (result: Array<FOLDER>) => {
         return result[0];
-      });
-  },
-  getFolderByUser: async (userId: number) => {
-    const db = await pool.getConnection();
-    const folderList = await db
-      .query("SELECT * FROM SPACE.FOLDER WHERE USER = ?", [userId])
-      .then((result): Array<any> => {
-        return result.slice(0, result.length);
-      });
+      }
+    );
+  }
+
+  public async getFolderByUser(userId: number) {
+    const folderList = await this.query("SELECT * FROM FOLDER WHERE USER = ?", [
+      userId,
+    ]).then((result): Array<FOLDER> => {
+      return result.slice(0, result.length);
+    });
     return folderList;
-  },
-  getHomeFolder: async (userid: number) => {
-    const db = await pool.getConnection();
-    const home = await db
-      .query("SELECT * FROM SPACE.FOLDER WHERE parent IS NULL AND user = ?", [
-        userid,
-      ])
-      .then((res) => {
-        if (res.length >= 1) {
-          return res[0];
-        } else {
-          return db
-            .query("INSERT INTO SPACE.FOLDER(title, user) VALUES (?,?)", [
-              "Home",
-              userid,
-            ])
-            .then(() => {
-              return db
-                .query("SELECT * FROM SPACE.FOLDER WHERE PARENT = NULL")
-                .then(async (folder) => {
-                  return folder[0];
-                });
-            });
-        }
-      });
+  }
+
+  public async getHomeFolder(userid: number): Promise<FOLDER> {
+    const home: FOLDER = await this.query(
+      "SELECT * FROM FOLDER WHERE parent IS NULL AND user = ?",
+      [userid]
+    ).then((res: FOLDER[]) => {
+      if (res.length >= 1) {
+        return res[0];
+      } else {
+        return this.query("INSERT INTO FOLDER(title, user) VALUES (?,?)", [
+          "Home",
+          userid,
+        ]).then(() => {
+          return this.query("SELECT * FROM FOLDER WHERE PARENT = NULL").then(
+            async (folder: FOLDER[]) => {
+              return folder[0];
+            }
+          );
+        });
+      }
+    });
     return home;
-  },
-  delete: async (id: number) => {
-    const db = await pool.getConnection();
-    await db.query("DELETE FROM SPACE.FOLDER WHERE ID = ?", [id]);
-  },
-  createFolder: async (user: number, title: string, parent: number) => {
-    const db = await pool.getConnection();
-    return await db.query(
-      "INSERT INTO SPACE.FOLDER(user, title, parent) VALUES (?,?,?)",
+  }
+
+  public async delete(id: number) {
+    await this.query("DELETE FROM FOLDER WHERE ID = ?", [id]);
+  }
+
+  public async createFolder(user: number, title: string, parent: number) {
+    return this.query(
+      "INSERT INTO FOLDER(user, title, parent) VALUES (?,?,?)",
       [user, title, parent]
     );
-  },
-};
+  }
+
+  public async getChildrens(currentFolderId: number): Promise<FOLDER[]> {
+    return this.query("SELECT * FROM FOLDER WHERE parent = ?", [
+      currentFolderId,
+    ]);
+  }
+
+  public async getPath(folderID: number): Promise<string> {
+    return this.query(
+      "WITH RECURSIVE path AS (" +
+        " SELECT title, parent FROM FOLDER WHERE id = ? " +
+        "UNION ALL " +
+        "SELECT FOLDER.title, FOLDER.parent FROM FOLDER, path WHERE FOLDER.id = path.parent" +
+        ") SELECT * FROM path",
+      [folderID]
+    ).then((res: Array<{ title: string; parent: number }>) => {
+      return res
+        .map((elt) => elt.title)
+        .reverse()
+        .join("/");
+    });
+  }
+}
