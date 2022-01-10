@@ -6,14 +6,14 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./to-do-element.component.scss'],
 })
 export class ToDoElementComponent implements OnInit {
-  @Input() value: string = '';
+  @Input() value: { title: string; id: number } = { title: '', id: -1 };
   @Input() deleteThis: () => void = () => {};
 
   constructor() {}
 
   ngOnInit(): void {}
 
-  onClick() : void {
+  onClick(): void {
     this.deleteThis();
   }
 }
