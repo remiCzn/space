@@ -8,8 +8,18 @@ import bcrypt from "bcrypt";
 import { UserRepository } from "../database/controllers/user";
 
 export class AuthBusinessController {
-  private TOKEN_COOKIE_NAME = "token";
-  private userRepo = new UserRepository();
+  private TOKEN_COOKIE_NAME: string;
+  private userRepo: UserRepository;
+
+  public constructor() {
+    this.TOKEN_COOKIE_NAME = "token";
+    this.userRepo = new UserRepository();
+
+    this.AuthMiddleware = this.AuthMiddleware.bind(this);
+    this.authorization = this.authorization.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
 
   public async AuthMiddleware(
     req: ApiRequest<any>,

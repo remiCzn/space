@@ -2,6 +2,10 @@ import { USER } from "../../database/models/user.db";
 import dbRepository from "./db";
 
 export class UserRepository extends dbRepository {
+  public constructor() {
+    super();
+  }
+
   public async getUserById(userId: number): Promise<USER> {
     return this.query("SELECT * FROM USER WHERE ID = ?", [userId]).then(
       (res) => {

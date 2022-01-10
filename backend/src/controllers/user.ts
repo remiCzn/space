@@ -10,7 +10,15 @@ import bcrypt from "bcrypt";
 import { UserRepository } from "../database/controllers/user";
 
 export class UserBusinessController {
-  private userRepo = new UserRepository();
+  private userRepo: UserRepository;
+
+  public constructor() {
+    this.userRepo = new UserRepository();
+
+    this.register = this.register.bind(this);
+    this.getMe = this.getMe.bind(this);
+    this.updateUser = this.updateUser.bind(this);
+  }
 
   public async register(
     req: ApiRequest<Register>,

@@ -4,7 +4,16 @@ import { FOLDER } from "../database/models/folder.db";
 import { FolderRepository } from "../database/controllers/folder";
 
 export class FolderBusinessController {
-  private folderRepo = new FolderRepository();
+  private folderRepo: FolderRepository;
+
+  public constructor() {
+    this.folderRepo = new FolderRepository();
+
+    this.getHome = this.getHome.bind(this);
+    this.displayFolder = this.displayFolder.bind(this);
+    this.createFolder = this.createFolder.bind(this);
+    this.deleteFolder = this.deleteFolder.bind(this);
+  }
 
   public async getHome(
     req: ApiRequest<any>,
