@@ -9,6 +9,21 @@
 }
 
 .icon-button {
-  margin-top: -8px;
-  line-height: 16px;
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+.main {
+  width: calc(100vw - 15px);
+  height: 100vh;
+}
+
+.nav {
+  padding-right: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+mat-drawer {
+  width: 300px;
 }

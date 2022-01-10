@@ -24,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { NavSideComponent } from 'src/app/components/home/nav-side/nav-side.component';
 import { DialogCreateFolder } from 'src/app/components/home/nav-side/dialog-create-folder';
+import { WorkComponent } from '../work/work.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { DialogCreateFolder } from 'src/app/components/home/nav-side/dialog-crea
     ToDoElementComponent,
     DialogCreateFolder,
     NavSideComponent,
+    WorkComponent,
   ],
   imports: [
     CommonModule,

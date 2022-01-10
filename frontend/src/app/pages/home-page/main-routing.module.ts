@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from 'src/app/components/home/home.component';
 import { UserComponent } from '../user/user.component';
+import { WorkComponent } from '../work/work.component';
 import { HomePageComponent } from './home-page.component';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: '',
     component: HomePageComponent,
     children: [
       {
@@ -14,13 +15,17 @@ const routes: Routes = [
         component: UserComponent,
       },
       {
-        path:'main',
-        component: HomeComponent
+        path: 'main',
+        component: WorkComponent,
+      },
+      {
+        path: 'files',
+        component: HomeComponent,
       },
       {
         path: '**',
-        redirectTo: 'main'
-      }
+        redirectTo: 'main',
+      },
     ],
   },
 ];

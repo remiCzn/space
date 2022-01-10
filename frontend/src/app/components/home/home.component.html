@@ -1,3 +1,21 @@
-<div style="width: 30%; border: grey 1px solid">
-  <app-nav-side></app-nav-side>
+<div class="main">
+  <mat-drawer-container [hasBackdrop]="false" style="height: 100%">
+    <mat-drawer #nav mode="push">
+      <div class="nav">
+        <app-nav-side style="width: 100%"></app-nav-side>
+      </div>
+    </mat-drawer>
+    <mat-drawer-content>
+      <div>
+        <button
+          mat-mini-fab
+          color="primary"
+          class="icon-button"
+          (click)="nav.toggle()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
 </div>

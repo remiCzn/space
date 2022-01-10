@@ -11,7 +11,7 @@ export class NavbarComponent implements OnInit {
   constructor(private router: Router, private auth: AuthService) {}
 
   goToUserPage() {
-    this.router.navigate(['home', 'me']);
+    this.router.navigate(['me']);
   }
 
   logout() {
@@ -19,7 +19,11 @@ export class NavbarComponent implements OnInit {
   }
 
   goToHome() {
-    this.router.navigate(['home', 'main']);
+    this.router.navigate(['main']);
+  }
+
+  goToFiles() {
+    this.router.navigate(['files']);
   }
 
   ngOnInit(): void {}
