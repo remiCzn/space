@@ -8,7 +8,10 @@ import { ApiService } from 'src/app/service/api.service';
 })
 export class ToDoListComponent implements OnInit {
   input: string = '';
-  tasks: Array<string> = [];
+  tasks: Array<{
+    title: string;
+    id: number;
+  }> = [];
 
   constructor(private api: ApiService) {}
 
@@ -16,7 +19,7 @@ export class ToDoListComponent implements OnInit {
     this.api
       .get('/tasks')
       .then((res: any) => {
-        console.log(res);
+        this.tasks = res.body.list;
       })
       .catch((err) => {
         console.log(err);
@@ -24,17 +27,20 @@ export class ToDoListComponent implements OnInit {
   }
 
   addTask() {
-    this.tasks.push(this.input);
     this.api
       .post('/task', { name: this.input })
       .then((res: any) => {
         this.input = '';
+        this.tasks = res.body;
       })
       .catch((err) => {});
   }
 
   deleteTask(index: number) {
-    this.tasks.splice(index, 1);
+    this.api.delete(`/task/${this.tasks[index].id}`).then((res) => {
+      console.log(res);
+      this.tasks.splice(index, 1);
+    });
   }
 
   callback(index: number) {

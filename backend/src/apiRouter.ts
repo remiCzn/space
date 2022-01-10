@@ -37,5 +37,8 @@ export default (() => {
   apiRouter
     .route("/task")
     .post(authBusiness.AuthMiddleware, taskBusiness.createTask);
+  apiRouter
+    .route("/task/:id")
+    .delete(authBusiness.AuthMiddleware, taskBusiness.deleteTask);
   return apiRouter;
 })();

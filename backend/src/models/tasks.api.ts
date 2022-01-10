@@ -1,5 +1,8 @@
 export interface GetTaskList {
-  list: Array<String>;
+  list: Array<{
+    title: string;
+    id: number;
+  }>;
 }
 
 export interface CreateTask {
