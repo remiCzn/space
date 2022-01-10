@@ -1,33 +1,43 @@
-import { CreateTask, GetTaskList } from "../models/api/tasks.api";
-import Task from "../models/database/task.model";
+import { TaskRepository } from "../database/controllers/task";
+import { TASK } from "../database/models/task.db";
+import { CreateTask, GetTaskList } from "../models/tasks.api";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 
-export default {
-  getTasks: async (req: ApiRequest<any>, res: ApiResponse<GetTaskList>) => {
-    const userId: string | undefined = req.user?.userId;
+export class TaskBusinessController {
+  private taskRepo: TaskRepository;
+
+  public constructor() {
+    this.taskRepo = new TaskRepository();
+
+    this.getTasks = this.getTasks.bind(this);
+    this.createTask = this.createTask.bind(this);
+  }
+
+  public async getTasks(req: ApiRequest<any>, res: ApiResponse<GetTaskList>) {
+    const userId: number | undefined = req.user?.userId;
     if (userId == undefined) {
       return res.sendStatus(403);
     }
-    const tasks: typeof Task[] = await Task.find({ user: userId });
+    const tasks: TASK[] = await this.taskRepo.findByUserId(userId);
     const taskResult: GetTaskList = {
-      list: tasks.map((task: typeof Task) => {
+      list: tasks.map((task: TASK) => {
         return task.title;
       }),
     };
     return res.status(200).send(taskResult);
-  },
-  createTask: async (
+  }
+
+  public async createTask(
     req: ApiRequest<CreateTask>,
     res: ApiResponse<{ message: string }>
-  ) => {
-    const userId: string | undefined = req.user?.userId;
+  ) {
+    const userId: number | undefined = req.user?.userId;
     if (userId == undefined) {
       return res.sendStatus(403);
     }
-    const task = new Task({ title: req.body.name, user: userId });
-    return task.save().then((newtask: any) => {
-      console.log(newtask);
-      return res.status(200).json({ message: "ok" });
+
+    return this.taskRepo.addTask(userId, req.body.name).then(() => {
+      return res.sendStatus(200);
     });
-  },
-};
+  }
+}

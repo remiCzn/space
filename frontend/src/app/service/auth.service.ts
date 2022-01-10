@@ -35,7 +35,11 @@ export class AuthService {
         password: password,
       })
       .then((res) => {
-        this.router.navigate(['home', 'main']);
+        if (res.status == 200) {
+          this.router.navigate(['home', 'main']);
+        } else {
+          return res.error.message;
+        }
         return;
       })
       .catch((err) => {

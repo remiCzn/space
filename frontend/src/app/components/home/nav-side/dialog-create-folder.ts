@@ -19,9 +19,7 @@ export class DialogCreateFolder implements OnInit {
     public dialogRef: MatDialogRef<DialogCreateFolder>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fb: FormBuilder
-  ) {
-    console.log(data);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.folderForm = this.fb.group({

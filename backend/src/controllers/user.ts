@@ -1,6 +1,5 @@
-import { Register } from "../models/api/register.api";
-import { UserApi, GetUserApi, PostUserApi } from "../models/api/user.api";
-import User from "../models/database/user.model";
+import { Register } from "../models/register.api";
+import { UserApi, GetUserApi, PostUserApi } from "../models/user.api";
 import {
   checkArguments,
   checkEmail,
@@ -8,12 +7,23 @@ import {
 } from "../utils/check.utils";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
 import bcrypt from "bcrypt";
+import { UserRepository } from "../database/controllers/user";
 
-export default {
-  register: async (
+export class UserBusinessController {
+  private userRepo: UserRepository;
+
+  public constructor() {
+    this.userRepo = new UserRepository();
+
+    this.register = this.register.bind(this);
+    this.getMe = this.getMe.bind(this);
+    this.updateUser = this.updateUser.bind(this);
+  }
+
+  public async register(
     req: ApiRequest<Register>,
     res: ApiResponse<{ message: string }>
-  ) => {
+  ) {
     if (
       !checkArguments(req.body.email, req.body.password, req.body.username) ||
       !checkEmail(req.body.email) ||
@@ -25,57 +35,50 @@ export default {
     const email: string = req.body.email.trim();
     const password: string = req.body.password.trim();
     const username: string = req.body.username.trim();
-    const users: Array<any> = await User.find({ email: email });
+    const users: Array<any> = await this.userRepo.getUserByEmail(email);
     if (users.length == 0) {
       bcrypt.hash(password, 10).then((hashPw) => {
-        const newUser = new User({
-          email: email,
-          password: hashPw,
-          username: username,
-        });
-        newUser.save();
-        res.status(200).json({ message: "new user registered" });
+        this.userRepo
+          .createUser(email, hashPw, username)
+          .then(() => {
+            res.status(200).json({ message: "new user registered" });
+          })
+          .catch(() => {
+            res.sendStatus(500);
+          });
       });
     } else {
       res.status(400).json({ message: "This user already exists" });
     }
-  },
+  }
 
-  getMe: (req: ApiRequest<any>, res: ApiResponse<GetUserApi>) => {
+  public async getMe(req: ApiRequest<any>, res: ApiResponse<GetUserApi>) {
     const user: UserApi | undefined = req.user;
     if (user == undefined) {
       return res.status(500).json({
         message: "Can't retrieve the informatons for the user",
         username: "",
-        firstname: "",
-        lastname: "",
       });
     }
     return res.status(200).json({
       message: "Success",
       username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
     });
-  },
+  }
 
-  updateUser: async (
+  public async updateUser(
     req: ApiRequest<PostUserApi>,
     res: ApiResponse<{ message: string }>
-  ) => {
+  ) {
     if (req.user == undefined || req.user.userId == undefined) {
       return res.status(400).json({ message: "Unable to retrieve the user" });
     } else {
       if (req.body.username == undefined || req.body.username == null) {
         return res.status(400).json({ message: "Username shouldn't be empty" });
       }
-      const userId: string = req.user.userId;
-      await User.findByIdAndUpdate(userId, {
-        username: req.body.username,
-        lastname: req.body.lastname,
-        firstname: req.body.firstname,
-      });
+      const userId: number = req.user.userId;
+      this.userRepo.changeUsername(userId, req.body.username);
       return res.status(200).json({ message: "User Updated!" });
     }
-  },
-};
+  }
+}

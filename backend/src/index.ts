@@ -3,16 +3,10 @@ import config from "./env";
 import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import mongoose from "mongoose";
+import dbRepository from "./database/controllers/db";
+import { FolderRepository } from "./database/controllers/folder";
 
-mongoose
-  .connect(config.DB_URL)
-  .then(() => {
-    console.log("MongoDB connected!");
-  })
-  .catch(() => {
-    console.error("MongoDB failed to connect");
-  });
+new dbRepository().testConnection();
 
 const server = express();
 

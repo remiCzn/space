@@ -1,98 +1,107 @@
-import { FolderApi } from "../models/api/folder.api";
-import Folder from "../models/database/folder.model";
-import folderService from "../services/folderService";
+import { FolderApi, getFolderApiResponse } from "../models/folder.api";
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
+import { FOLDER } from "../database/models/folder.db";
+import { FolderRepository } from "../database/controllers/folder";
 
-export default {
-  getHome: async (req: ApiRequest<any>, res: ApiResponse<any>) => {
-    const userId: string | undefined = req.user?.userId;
+export class FolderBusinessController {
+  private folderRepo: FolderRepository;
+
+  public constructor() {
+    this.folderRepo = new FolderRepository();
+
+    this.getHome = this.getHome.bind(this);
+    this.displayFolder = this.displayFolder.bind(this);
+    this.createFolder = this.createFolder.bind(this);
+    this.deleteFolder = this.deleteFolder.bind(this);
+  }
+
+  public async getHome(
+    req: ApiRequest<any>,
+    res: ApiResponse<getFolderApiResponse>
+  ) {
+    const userId: number | undefined = req.user?.userId;
     if (userId == undefined) {
       return res.sendStatus(403);
     }
-    await Folder.findOne({ user: userId, isHome: true })
-      .then((resHome) => {
-        if (resHome == null) {
-          //Create home folder
-          const home = new Folder({
-            title: "Home",
-            isHome: true,
-            user: userId,
-          });
-          //Send home folder to the front
-          return home.save().then((newHome: any) => {
-            const folder: FolderApi = {
-              name: newHome.title,
-              childrens: newHome.childrens,
-              id: newHome._id,
-              updatedAt: newHome.updatedAt,
-              parentId: newHome.parentId,
-            };
-            return res.status(200).json(folder);
-          });
-        }
-        //Retrieve home folder and send to the front
-        const folder: FolderApi = {
-          name: resHome.title,
-          childrens: resHome.childrens,
-          id: resHome._id,
-          updatedAt: resHome.updatedAt,
-          parentId: resHome.parentId,
+    const home: FOLDER = await this.folderRepo.getHomeFolder(userId);
+    const childrens: Array<FOLDER> = await this.folderRepo.getChildrens(
+      home.id
+    );
+
+    return res.status(200).json({
+      id: home.id,
+      name: home.title,
+      childrens: childrens.map((child: FOLDER) => {
+        return {
+          id: child.id,
+          name: child.title,
         };
-        return res.status(200).json(folder);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.sendStatus(500);
+      }),
+      parentId: null,
+    });
+  }
+
+  public async displayFolder(
+    req: ApiRequest<any>,
+    res: ApiResponse<getFolderApiResponse>
+  ) {
+    try {
+      const folderId: number = parseInt(req.params.id);
+      const folder: FOLDER = await this.folderRepo.getFolderById(folderId);
+      const childrens: Array<FOLDER> = await this.folderRepo.getChildrens(
+        folder.id
+      );
+      const path: string = await this.folderRepo.getPath(folderId);
+
+      res.status(200).json({
+        id: folder.id,
+        name: path,
+        childrens: childrens.map((child: FOLDER) => {
+          return {
+            id: child.id,
+            name: child.title,
+          };
+        }),
+        parentId: folder.parent,
       });
-  },
-  displayFolder: (req: ApiRequest<any>, res: ApiResponse<any>) => {
-    const folderId: string = req.params.id;
-    Folder.findById(folderId)
-      .then((folder: any) => {
-        res.status(200).json(<FolderApi>{
-          name: folder.title,
-          updatedAt: folder.updatedAt,
-          id: folder._id,
-          childrens: folder.childrens,
-          parentId: folder.parentId,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
-  createFolder: async (req: ApiRequest<any>, res: ApiResponse<FolderApi>) => {
+    } catch (error) {
+      res.sendStatus(500);
+    }
+  }
+
+  public async createFolder(
+    req: ApiRequest<any>,
+    res: ApiResponse<getFolderApiResponse>
+  ) {
     const name: string = req.body.name;
-    const parentId: string = req.body.parentId;
-    const folder = new Folder({
-      title: name,
-      parentId: parentId,
-      user: req.user?.userId,
-    });
-    await folder.save().then((newFolder: any) => {
-      Folder.updateOne(
-        { _id: parentId },
-        {
-          $push: { childrens: newFolder._id },
-        }
-      )
-        .then((pushCheck) => {
-          return res.status(200).json({
-            id: newFolder._id,
-            name: name,
-            updatedAt: newFolder.updatedAt,
-            childrens: [],
-            parentId: newFolder.parentId,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+    const parentId: number = req.body.parentId;
+    const userId: number | undefined = req.user?.userId;
+    if (userId == undefined || name == undefined || parentId == undefined) {
+      return res.sendStatus(403);
+    }
+    this.folderRepo.createFolder(userId, name, parentId).then(() => {
+      this.folderRepo.getFolderById(parentId).then((currentFolder: FOLDER) => {
+        res.status(200).json({
+          id: currentFolder.id,
+          name: currentFolder.title,
+          childrens: [],
+          parentId: currentFolder.parent,
         });
+      });
     });
-  },
-  deleteFolder: async (req: ApiRequest<any>, res: ApiResponse<any>) => {
-    const folderId = req.params.id;
-    const result = await folderService.deleteFolder(folderId);
-    res.status(200).send(result);
-  },
-};
+  }
+
+  public async deleteFolder(req: ApiRequest<any>, res: ApiResponse<any>) {
+    const folderId = parseInt(req.params.id);
+    try {
+      const folder: FOLDER = await this.folderRepo.getFolderById(folderId);
+      if (folder.user != req.user?.userId) {
+        return res.sendStatus(403);
+      }
+      await this.folderRepo.delete(folderId);
+      return res.status(200).json({ id: folder.parent });
+    } catch (error) {
+      return res.sendStatus(500);
+    }
+  }
+}
