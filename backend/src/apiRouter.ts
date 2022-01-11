@@ -1,14 +1,18 @@
 import { Router } from "express";
 import { AuthBusinessController } from "./controllers/auth";
+import { FileBusinessController } from "./controllers/file";
 import { FolderBusinessController } from "./controllers/folder";
 import { TaskBusinessController } from "./controllers/task";
 import { UserBusinessController } from "./controllers/user";
+import multer from "multer";
 
 export default (() => {
   const authBusiness = new AuthBusinessController();
   const folderBusiness = new FolderBusinessController();
   const userBusiness = new UserBusinessController();
   const taskBusiness = new TaskBusinessController();
+  const fileBusiness = new FileBusinessController();
+  const upload = multer({ dest: "../public/static/upload" });
 
   const apiRouter: Router = Router();
   apiRouter.route("/register").post(userBusiness.register);
@@ -40,5 +44,9 @@ export default (() => {
   apiRouter
     .route("/task/:id")
     .delete(authBusiness.AuthMiddleware, taskBusiness.deleteTask);
+
+  apiRouter.route("/file/upload").post(fileBusiness.upload);
+  apiRouter.route("/file/files").get(fileBusiness.getListFiles);
+
   return apiRouter;
 })();

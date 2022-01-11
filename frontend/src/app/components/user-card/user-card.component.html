@@ -11,7 +11,6 @@
       class="avatar"
     />
     <h1 class="pt-2">{{ username.toUpperCase() }}</h1>
-    <h2 style="color: gray">{{ firstname }} {{ lastname }}</h2>
   </div>
   <ng-template #editor>
     <div class="user-card">
@@ -27,6 +26,25 @@
         #editForm="ngForm"
       >
         <mat-form-field>
+          <div>
+            <mat-toolbar>
+              <!-- Display files names -->
+              <input matInput readonly />
+
+              <!-- Browse Button -->
+              <button mat-flat-button color="primary">Browse File</button>
+            </mat-toolbar>
+
+            <!-- Fetch selected filed on change -->
+            <input
+              type="file"
+              (change)="selectFile($event)"
+              class="uploadFile"
+            />
+          </div>
+        </mat-form-field>
+
+        <mat-form-field>
           <mat-label>Username</mat-label>
           <input
             matInput
@@ -34,30 +52,12 @@
             placeholder="Enter your username"
           />
         </mat-form-field>
-        <div class="d-flex">
-          <mat-form-field class="px-2">
-            <mat-label>Firstname</mat-label>
-            <input
-              matInput
-              formControlName="firstname"
-              placeholder="Enter your Firstname"
-            />
-          </mat-form-field>
-          <mat-form-field class="px-2">
-            <mat-label>Lastname</mat-label>
-            <input
-              matInput
-              formControlName="lastname"
-              placeholder="Enter your Lastname"
-            />
-          </mat-form-field>
-        </div>
       </form>
       <button
         mat-raised-button
         type="submit"
         class="align-self-end"
-        (click)="editForm.ngSubmit.emit()"
+        (click)="upload()"
         [disabled]="!editForm.form.valid"
         color="primary"
       >

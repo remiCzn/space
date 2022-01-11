@@ -73,6 +73,7 @@ export class UserBusinessController {
     if (req.user == undefined || req.user.userId == undefined) {
       return res.status(400).json({ message: "Unable to retrieve the user" });
     } else {
+      console.log(req.body);
       if (req.body.username == undefined || req.body.username == null) {
         return res.status(400).json({ message: "Username shouldn't be empty" });
       }

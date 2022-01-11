@@ -10,4 +10,5 @@ export interface GetUserApi {
 
 export interface PostUserApi {
   username: string;
+  file: any;
 }
