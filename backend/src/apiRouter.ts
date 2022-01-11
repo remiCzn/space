@@ -4,7 +4,6 @@ import { FileBusinessController } from "./controllers/file";
 import { FolderBusinessController } from "./controllers/folder";
 import { TaskBusinessController } from "./controllers/task";
 import { UserBusinessController } from "./controllers/user";
-import multer from "multer";
 
 export default (() => {
   const authBusiness = new AuthBusinessController();
@@ -12,7 +11,6 @@ export default (() => {
   const userBusiness = new UserBusinessController();
   const taskBusiness = new TaskBusinessController();
   const fileBusiness = new FileBusinessController();
-  const upload = multer({ dest: "../public/static/upload" });
 
   const apiRouter: Router = Router();
   apiRouter.route("/register").post(userBusiness.register);

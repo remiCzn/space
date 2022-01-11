@@ -4,9 +4,12 @@ import api from "./apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dbRepository from "./database/controllers/db";
-import { FolderRepository } from "./database/controllers/folder";
+import fileUpload from "express-fileupload";
+import { FileRepository } from "./database/controllers/file";
 
 new dbRepository().testConnection();
+
+new FileRepository().addFile("CG6.pdf", "public/static/upload");
 
 const server = express();
 
@@ -27,6 +30,8 @@ server.use((req, res, next) => {
   next();
 });
 server.use(express.json());
+
+server.use(fileUpload());
 
 server.get("/", (req, res) => {
   res.send(`Connected on server`);

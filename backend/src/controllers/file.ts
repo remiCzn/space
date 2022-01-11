@@ -1,26 +1,37 @@
 import { ApiRequest, ApiResponse } from "../utils/expressUtils";
-import uploadFileMiddleware from "../utils/file";
 import fs from "fs";
+import { UploadedFile } from "express-fileupload";
+import { __basedir } from "../global";
+import { FileRepository } from "../database/controllers/file";
 
 export class FileBusinessController {
   private baseUrl: string;
+  private fileRepo: FileRepository;
 
   public constructor() {
     this.baseUrl = "http://localhost:8080/";
+    this.fileRepo = new FileRepository();
+
     this.upload = this.upload.bind(this);
     this.getListFiles = this.getListFiles.bind(this);
   }
 
   public async upload(req: ApiRequest<any>, res: ApiResponse<any>) {
-    console.log(req.file, req.files);
     try {
-      //await uploadFileMiddleware(req, res);
-
-      if (req.file == undefined) {
+      if (req.files == undefined || req.files?.file == undefined) {
         return res.sendStatus(400);
       }
 
-      res.status(200).send("okkok " + req.file.originalname);
+      const file: UploadedFile = <UploadedFile>req.files.file;
+      const name: string = file.name;
+      const path: string = "public/static/upload/";
+      const extension: string = name.split(".").at(-1)!;
+
+      await this.fileRepo.addFile(name, path).then((id: number) => {
+        file.mv(__basedir + path + id + "." + extension).then(() => {
+          res.status(200).send("okkok ");
+        });
+      });
     } catch (err: any) {
       console.log(err);
       if (err.code == "LIMIT_FILE_SIZE") {

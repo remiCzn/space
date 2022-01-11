@@ -1,0 +1,6 @@
+CREATE TABLE SPACE.FILE (
+    id INTEGER not NULL AUTO_INCREMENT,
+    name VARCHAR(255) not NULL,
+    path VARCHAR(255) not NULL,
+    PRIMARY KEY(id)
+)
