@@ -1,0 +1,8 @@
+name: Github CI for Space Repo
+on: [ push ]
+jobs:
+  Init-CI:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: echo "The job will running..."
+      - run: echo "Done."
