@@ -6,11 +6,12 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 12.x, 14.x, 16.x ]
+        node-version: [ 16.x ]
 
     steps:
       - run: echo "The job will running..."
       - uses: actions/checkout@v2
+      - run: cd backend
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
