@@ -1,8 +1,19 @@
 name: Github CI for Space Repo
-on: [ push ]
+on: [ push, pull_request ]
 jobs:
-  Init-CI:
-    runs-on: ubuntu-20.04
+  CI:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 12.x, 14.x, 16.x ]
+    
     steps:
       - run: echo "The job will running..."
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: cd backend && npm run build
       - run: echo "Done."
