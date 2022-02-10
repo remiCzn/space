@@ -1,4 +1,4 @@
-import {Response, NextFunction} from "express";
+import {NextFunction, Response} from "express";
 import env from "../env";
 import {Login} from "../models/login.api";
 import {checkArguments} from "../utils/check.utils";
@@ -49,8 +49,7 @@ export class AuthBusinessController {
             return res.send(false);
         }
         try {
-            const UserId = jwtUtils.verify(token).userId;
-            const user = await this.userRepo.getUserById(UserId);
+            jwtUtils.verify(token).userId;
             return res.send(true);
         } catch {
             return res.send(false);
@@ -71,7 +70,7 @@ export class AuthBusinessController {
             .then((qUsers) => {
                 return qUsers;
             })
-            .catch((err) => {
+            .catch(() => {
                 return [];
             });
         if (users.length > 0) {
