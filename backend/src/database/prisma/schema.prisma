@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model file {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+  path String @db.VarChar(255)
+}
+
+model folder {
+  id                Int      @id @default(autoincrement())
+  title             String   @db.VarChar(255)
+  user              Int
+  parent            Int?
+  folder            folder?  @relation("folderTofolder_parent", fields: [parent], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FOLDER_ibfk_1")
+  user_folderTouser user     @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FOLDER_ibfk_2")
+  other_folder      folder[] @relation("folderTofolder_parent")
+
+  @@index([parent], map: "parent")
+  @@index([user], map: "user")
+}
+
+model task {
+  id              Int    @id @default(autoincrement())
+  user            Int
+  title           String @db.VarChar(255)
+  user_taskTouser user   @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "TASK_ibfk_1")
+
+  @@index([user], map: "user")
+}
+
+model user {
+  id       Int      @id @default(autoincrement())
+  email    String   @db.VarChar(255)
+  password String   @db.VarChar(255)
+  username String   @db.VarChar(255)
+  folder   folder[]
+  task     task[]
+}
