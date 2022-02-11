@@ -17,8 +17,8 @@ $avatar-size: 150px !default;
 }
 
 .mat-form-field {
-  margin: 40px 0;
-  width: 500px !important;
+  margin: 10px 0;
+  width: 350px !important;
 }
 
 .mat-toolbar-single-row {
@@ -27,16 +27,22 @@ $avatar-size: 150px !default;
 }
 
 .mat-toolbar-single-row button {
-  width: 200px;
+  width: 100px !important;
+  padding: 0 !important;
+  font-size: 10px;
 }
 
 .mat-form-field {
   width: 100%;
 }
 
+mat-raised-button {
+  width: 300px;
+}
+
 .uploadFile {
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
   z-index: 9;
   opacity: 0;
