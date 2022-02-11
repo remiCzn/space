@@ -49,3 +49,4 @@ Thumbs.db
 
 public/
 package-lock.json
+src/database/prisma/node_modules/

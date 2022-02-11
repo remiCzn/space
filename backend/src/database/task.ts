@@ -5,7 +5,7 @@ export class TaskRepository extends dbRepository {
     public async findByUserId(userId: number): Promise<Array<Task>> {
         return this.db().task.findMany({
             where: {
-                user: userId
+                userId: userId
             }
         }).catch((err) => {
             throw new AccessDatabaseError(err);
@@ -15,7 +15,7 @@ export class TaskRepository extends dbRepository {
     public async addTask(userId: number, title: string): Promise<void> {
         await this.db().task.create({
             data: {
-                user: userId,
+                userId: userId,
                 title: title
             }
         }).catch((err) => {

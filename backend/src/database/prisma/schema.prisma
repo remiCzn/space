@@ -8,31 +8,36 @@ datasource db {
 }
 
 model file {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(255)
-  path String @db.VarChar(255)
+  id     Int     @default(autoincrement())
+  name   String  @db.VarChar(255)
+  path   String  @db.VarChar(255)
+  userId Int
+  user   user    @relation("owner", fields: [userId], references: [id], map: "owner_user")
+  avatar avatar?
+
+  @@id([id, userId])
 }
 
 model folder {
-  id                Int      @id @default(autoincrement())
-  title             String   @db.VarChar(255)
-  user              Int
-  parent            Int?
-  folder            folder?  @relation("folderTofolder_parent", fields: [parent], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FOLDER_ibfk_1")
-  user_folderTouser user     @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FOLDER_ibfk_2")
-  other_folder      folder[] @relation("folderTofolder_parent")
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  userId    Int
+  parentId  Int?
+  parent    folder?  @relation("parent", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "parent_folder")
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "folder_owner")
+  childrens folder[] @relation("parent")
 
-  @@index([parent], map: "parent")
-  @@index([user], map: "user")
+  @@index([parentId], map: "parent")
+  @@index([userId], map: "user")
 }
 
 model task {
-  id              Int    @id @default(autoincrement())
-  user            Int
-  title           String @db.VarChar(255)
-  user_taskTouser user   @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "TASK_ibfk_1")
+  id     Int    @id @default(autoincrement())
+  userId Int
+  title  String @db.VarChar(255)
+  user   user   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "task_owner")
 
-  @@index([user], map: "user")
+  @@index([userId], map: "user")
 }
 
 model user {
@@ -42,4 +47,18 @@ model user {
   username String   @db.VarChar(255)
   folder   folder[]
   task     task[]
+  file     file[]   @relation("owner")
+  avatar   avatar?
+}
+
+model avatar {
+  userId Int  @id
+  user   user @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileId Int  @unique
+  file   file @relation(fields: [fileId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
 }

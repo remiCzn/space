@@ -18,7 +18,10 @@ export class FileBusinessController {
 
     public async upload(req: ApiRequest<any>, res: ApiResponse<any>) {
         try {
-            if (req.files == undefined || req.files?.file == undefined) {
+            if (req.user === undefined || req.user.userId === undefined) {
+                return res.sendStatus(403);
+            }
+            if (req.files === undefined || req.files?.file === undefined) {
                 return res.sendStatus(400);
             }
 
@@ -27,7 +30,7 @@ export class FileBusinessController {
             const path: string = "public/static/upload/";
             const extension: string = name.split(".").at(-1)!;
 
-            await this.fileRepo.addFile(name, path).then((id: number) => {
+            await this.fileRepo.addFile(name, path, req.user?.userId).then((id: number) => {
                 file.mv(__basedir + path + id + "." + extension).then(() => {
                     res.status(200).send("okkok ");
                 });
