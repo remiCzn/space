@@ -62,7 +62,7 @@ export class FolderBusinessController {
                         name: child.title,
                     };
                 }),
-                parentId: folder.parent,
+                parentId: folder.parentId,
             });
         } catch (error) {
             res.sendStatus(500);
@@ -85,7 +85,7 @@ export class FolderBusinessController {
                     id: currentFolder.id,
                     name: currentFolder.title,
                     childrens: [],
-                    parentId: currentFolder.parent,
+                    parentId: currentFolder.parentId,
                 });
             });
         });
@@ -95,11 +95,11 @@ export class FolderBusinessController {
         const folderId = parseInt(req.params.id);
         try {
             const folder: Folder = await this.folderRepo.getFolderById(folderId);
-            if (folder.user != req.user?.userId) {
+            if (folder.userId != req.user?.userId) {
                 return res.sendStatus(403);
             }
             await this.folderRepo.delete(folderId);
-            return res.status(200).json({id: folder.parent});
+            return res.status(200).json({id: folder.parentId});
         } catch (error) {
             return res.sendStatus(500);
         }
