@@ -1,6 +1,5 @@
-import {ApiRequest, ApiResponse} from "../utils/expressUtils";
 import fs from "fs";
-import {UploadedFile} from "express-fileupload";
+import {FileArray, UploadedFile} from "express-fileupload";
 import {__basedir} from "../global";
 import {FileRepository} from "../database/file";
 
@@ -16,36 +15,31 @@ export class FileBusinessController {
         this.getListFiles = this.getListFiles.bind(this);
     }
 
-    public async upload(req: ApiRequest<any>, res: ApiResponse<any>) {
+    public async upload(user?: { userId: number }, files?: FileArray): Promise<number> {
         try {
-            if (req.user === undefined || req.user.userId === undefined) {
-                return res.sendStatus(403);
+            if (user === undefined || user.userId === undefined) {
+                return 403;
             }
-            if (req.files === undefined || req.files?.file === undefined) {
-                return res.sendStatus(400);
+            if (files === undefined || files.file === undefined) {
+                return 400;
             }
 
-            const file: UploadedFile = <UploadedFile>req.files.file;
+            const file: UploadedFile = <UploadedFile>files.file;
             const name: string = file.name;
             const path: string = "public/static/upload/";
             const extension: string = name.split(".").at(-1)!;
 
-            await this.fileRepo.addFile(name, path, req.user?.userId).then((id: number) => {
-                file.mv(__basedir + path + id + "." + extension).then(() => {
-                    res.status(200).send("okkok ");
+            return this.fileRepo.addFile(name, path, user.userId).then((id: number) => {
+                return file.mv(__basedir + path + id + "." + extension).then(() => {
+                    return 200;
                 });
             });
         } catch (err: any) {
-            console.log(err);
-            if (err.code == "LIMIT_FILE_SIZE") {
-                res.sendStatus(500);
-            }
-
-            res.sendStatus(500);
+            return 500;
         }
     }
 
-    public async getListFiles(req: ApiRequest<any>, res: ApiResponse<any>) {
+    public async getListFiles() {
         const directory = __dirname + "/public/static/uploads";
 
         const files = fs.readdirSync(directory);
@@ -61,6 +55,6 @@ export class FileBusinessController {
             });
         });
 
-        res.status(200).json(fileInfos);
+        return fileInfos;
     }
 }

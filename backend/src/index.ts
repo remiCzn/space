@@ -1,6 +1,6 @@
 import express from "express";
 import config from "./env";
-import api from "./apiRouter";
+import api from "./api/apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";

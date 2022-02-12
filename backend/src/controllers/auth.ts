@@ -1,70 +1,58 @@
-import {NextFunction, Response} from "express";
 import env from "../env";
-import {Login} from "../models/login.api";
-import {checkArguments} from "../utils/check.utils";
-import {ApiRequest, ApiResponse} from "../utils/expressUtils";
 import jwtUtils from "../utils/jwt.utils";
 import bcrypt from "bcrypt";
 import {UserRepository} from "../database/user";
+import {Token} from "../models/login.api";
 
 export class AuthBusinessController {
-    private TOKEN_COOKIE_NAME: string;
+    public readonly TOKEN_COOKIE_NAME: string;
     private userRepo: UserRepository;
 
     public constructor() {
         this.TOKEN_COOKIE_NAME = "token";
         this.userRepo = new UserRepository();
 
-        this.AuthMiddleware = this.AuthMiddleware.bind(this);
-        this.authorization = this.authorization.bind(this);
+        this.checkLogin = this.checkLogin.bind(this);
+        this.checkToken = this.checkToken.bind(this);
         this.login = this.login.bind(this);
-        this.logout = this.logout.bind(this);
     }
 
-    public async AuthMiddleware(
-        req: ApiRequest<any>,
-        res: Response,
-        next: NextFunction
-    ) {
-        const token = req.cookies.token;
+    public async checkLogin(token: string): Promise<{ userId: number, username: string } | undefined> {
         if (!token) {
-            return res.sendStatus(403);
+            return undefined;
         }
         try {
             const UserId: number = jwtUtils.verify(token).userId;
             const user = await this.userRepo.getUserById(UserId);
-            req.user = {
+            return {
                 userId: UserId,
                 username: user.username,
             };
-            return next();
         } catch {
-            return res.sendStatus(403);
+            return undefined;
         }
     }
 
-    public async authorization(req: ApiRequest<any>, res: Response) {
-        const token = req.cookies.token;
+    public async checkToken(token: string): Promise<boolean> {
         if (!token) {
-            return res.send(false);
+            return false;
         }
         try {
             jwtUtils.verify(token).userId;
-            return res.send(true);
+            return true;
         } catch {
-            return res.send(false);
+            return false;
         }
     }
 
-    public async login(
-        req: ApiRequest<Login>,
-        res: ApiResponse<{ message: string }>
-    ) {
-        if (!checkArguments(req.body.email, req.body.password)) {
-            return res.status(400).json({message: "Invalid parameter(s)"});
+    public async login(email?: string, password?: string)
+        : Promise<{ message: string, status: number, token?: Token }> {
+        if (email === undefined || password === undefined) {
+            return {
+                status: 400,
+                message: "Invalid parameter(s)"
+            }
         }
-        const email: string = req.body.email.trim();
-        const password: string = req.body.password.trim();
         const users = await this.userRepo
             .getUserByEmail(email)
             .then((qUsers) => {
@@ -83,26 +71,24 @@ export class AuthBusinessController {
                 const token: string = jwtUtils.sign({
                     userId: user.id,
                 });
-                return res
-                    .cookie(this.TOKEN_COOKIE_NAME, token, {
-                        httpOnly: false,
-                        secure: true,
-                        expires: new Date(Date.now() + env.JWT_EXPIRES),
-                    })
-                    .status(200)
-                    .json({message: "Logged in"});
+                return {
+                    message: "Logged in",
+                    status: 200,
+                    token: {
+                        token: token,
+                        tokenName: this.TOKEN_COOKIE_NAME,
+                        parameters: {
+                            httpOnly: false,
+                            secure: true,
+                            expires: new Date(Date.now() + env.JWT_EXPIRES),
+                        }
+                    }
+                }
             } else {
-                return res.status(403).json({message: "Wrong password"});
+                return {status: 403, message: "Wrong password"};
             }
         } else {
-            return res.status(400).json({message: "This user doesn't exists"});
+            return {status: 400, message: "This user doesn't exists"};
         }
-    }
-
-    public logout(req: ApiRequest<{}>, res: ApiResponse<{ message: string }>) {
-        return res
-            .clearCookie(this.TOKEN_COOKIE_NAME)
-            .status(200)
-            .json({message: "Logged out"});
     }
 }
