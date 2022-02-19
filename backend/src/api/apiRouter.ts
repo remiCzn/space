@@ -43,7 +43,7 @@ export default (() => {
         .route("/task/:id")
         .delete(authApi.authorizationMiddleware, taskBusiness.deleteTask);
 
-    apiRouter.route("/file/upload").post(fileApi.upload);
+    apiRouter.route("/file/upload").post(authApi.authorizationMiddleware, fileApi.upload);
     apiRouter.route("/file/files").get(fileApi.getListFiles);
 
     return apiRouter;
