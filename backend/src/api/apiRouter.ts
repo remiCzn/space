@@ -1,13 +1,13 @@
 import {Router} from "express";
-import {FolderBusinessController} from "../controllers/folder";
 import {TaskBusinessController} from "../controllers/task";
 import {UserBusinessController} from "../controllers/user";
 import {AuthApi} from "./auth.api";
 import {FileApi} from "./file.api";
+import {FolderApi} from "./folder.api";
 
 export default (() => {
     const authApi = new AuthApi();
-    const folderBusiness = new FolderBusinessController();
+    const folderApi = new FolderApi();
     const userBusiness = new UserBusinessController();
     const taskBusiness = new TaskBusinessController();
     const fileApi = new FileApi();
@@ -24,14 +24,14 @@ export default (() => {
 
     apiRouter
         .route("/folder")
-        .post(authApi.authorizationMiddleware, folderBusiness.createFolder);
+        .post(authApi.authorizationMiddleware, folderApi.createFolder);
     apiRouter
         .route("/folder/home")
-        .get(authApi.authorizationMiddleware, folderBusiness.getHome);
+        .get(authApi.authorizationMiddleware, folderApi.getHome);
     apiRouter
         .route("/folder/:id")
-        .get(authApi.authorizationMiddleware, folderBusiness.displayFolder)
-        .delete(authApi.authorizationMiddleware, folderBusiness.deleteFolder);
+        .get(authApi.authorizationMiddleware, folderApi.displayFolder)
+        .delete(authApi.authorizationMiddleware, folderApi.deleteFolder);
 
     apiRouter
         .route("/tasks")
