@@ -1,8 +1,9 @@
 import express from "express";
 import config from "./env";
-import api from "./apiRouter";
+import api from "./api/apiRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 
 const server = express();
 
@@ -23,6 +24,8 @@ server.use((req, res, next) => {
     next();
 });
 server.use(express.json());
+
+server.use(fileUpload());
 
 server.get("/", (req, res) => {
     res.send(`Connected on server`);

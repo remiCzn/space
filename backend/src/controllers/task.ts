@@ -60,7 +60,7 @@ export class TaskBusinessController {
             if (task == undefined) {
                 return res.sendStatus(404);
             }
-            if (task.user != req.user?.userId || req.user?.userId == undefined) {
+            if (task.userId != req.user?.userId || req.user?.userId == undefined) {
                 return res.sendStatus(403);
             }
 

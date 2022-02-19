@@ -1,7 +1,7 @@
 import {getFolderApiResponse} from "../models/folder.api";
-import {ApiRequest, ApiResponse} from "../utils/expressUtils";
 import {FolderRepository} from "../database/folder";
 import {folder as Folder} from "@prisma/client";
+import {HTTP_RESULT} from "../utils/results";
 
 export class FolderBusinessController {
     private folderRepo: FolderRepository;
@@ -15,20 +15,13 @@ export class FolderBusinessController {
         this.deleteFolder = this.deleteFolder.bind(this);
     }
 
-    public async getHome(
-        req: ApiRequest<any>,
-        res: ApiResponse<getFolderApiResponse>
-    ) {
-        const userId: number | undefined = req.user?.userId;
-        if (userId == undefined) {
-            return res.sendStatus(403);
-        }
+    public async getHome(userId: number): Promise<getFolderApiResponse> {
         const home: Folder = await this.folderRepo.getHomeFolder(userId);
         const childrens: Array<Folder> = await this.folderRepo.getChildrens(
             home.id
         );
 
-        return res.status(200).json({
+        return {
             id: home.id,
             name: home.title,
             childrens: childrens.map((child: Folder) => {
@@ -38,22 +31,18 @@ export class FolderBusinessController {
                 };
             }),
             parentId: null,
-        });
+        };
     }
 
-    public async displayFolder(
-        req: ApiRequest<any>,
-        res: ApiResponse<getFolderApiResponse>
-    ) {
+    public async displayFolder(folderId: number): Promise<getFolderApiResponse | undefined> {
         try {
-            const folderId: number = parseInt(req.params.id);
             const folder: Folder = await this.folderRepo.getFolderById(folderId);
             const childrens: Array<Folder> = await this.folderRepo.getChildrens(
                 folder.id
             );
             const path: string = await this.folderRepo.getPath(folderId);
 
-            res.status(200).json({
+            return {
                 id: folder.id,
                 name: path,
                 childrens: childrens.map((child: Folder) => {
@@ -62,46 +51,36 @@ export class FolderBusinessController {
                         name: child.title,
                     };
                 }),
-                parentId: folder.parent,
-            });
+                parentId: folder.parentId,
+            };
         } catch (error) {
-            res.sendStatus(500);
+            return undefined;
         }
     }
 
-    public async createFolder(
-        req: ApiRequest<any>,
-        res: ApiResponse<getFolderApiResponse>
-    ) {
-        const name: string = req.body.name;
-        const parentId: number = req.body.parentId;
-        const userId: number | undefined = req.user?.userId;
-        if (userId == undefined || name == undefined || parentId == undefined) {
-            return res.sendStatus(403);
-        }
-        this.folderRepo.createFolder(userId, name, parentId).then(() => {
-            this.folderRepo.getFolderById(parentId).then((currentFolder: Folder) => {
-                res.status(200).json({
-                    id: currentFolder.id,
-                    name: currentFolder.title,
-                    childrens: [],
-                    parentId: currentFolder.parent,
-                });
-            });
+    public async createFolder(name: string, parentId: number, userId: number) {
+        await this.folderRepo.createFolder(userId, name, parentId);
+        return this.folderRepo.getFolderById(parentId).then((currentFolder: Folder) => {
+            return {
+                id: currentFolder.id,
+                name: currentFolder.title,
+                childrens: [],
+                parentId: currentFolder.parentId,
+            };
         });
+
     }
 
-    public async deleteFolder(req: ApiRequest<any>, res: ApiResponse<any>) {
-        const folderId = parseInt(req.params.id);
+    public async deleteFolder(folderId: number, userId: number): Promise<{ status: number, folder?: { id: number | null } }> {
         try {
             const folder: Folder = await this.folderRepo.getFolderById(folderId);
-            if (folder.user != req.user?.userId) {
-                return res.sendStatus(403);
+            if (folder.userId != userId) {
+                return {status: HTTP_RESULT.FORBIDDEN}
             }
             await this.folderRepo.delete(folderId);
-            return res.status(200).json({id: folder.parent});
+            return {status: HTTP_RESULT.SUCCESS, folder: {id: folder.parentId}};
         } catch (error) {
-            return res.sendStatus(500);
+            return {status: HTTP_RESULT.INTERNAL_SERVER_ERROR}
         }
     }
 }
