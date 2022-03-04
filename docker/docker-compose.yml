@@ -11,10 +11,24 @@ services:
       bash -c "npm install && ng serve --host 0.0.0.0 --port 4200"
   bdd:
     image: mariadb:10
-    container_name: databse
+    container_name: database
     restart: always
     ports:
       - '3306:3306'
     environment:
       MARIADB_ROOT_PASSWORD: root
-
+  backend:
+    container_name: backend
+    build: ../backend
+    volumes:
+      - '../backend:/usr/src/app'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - frontend
+      - bdd
+    command: >
+      bash -c "npm install && npm start"
+    environment:
+      - LOGGING=true
+      - JWT_EXPIRES=123456
